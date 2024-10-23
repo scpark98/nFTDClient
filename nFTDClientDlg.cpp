@@ -111,6 +111,7 @@ BOOL CnFTDClientDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	RestoreWindowPosition(&theApp, this);
 
+
 	std::thread t(&CnFTDClientDlg::thread_connect, this);
 	t.detach();
 

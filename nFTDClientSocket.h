@@ -32,6 +32,7 @@ public:
 	BOOL FileSize(LPTSTR lpPathName, ULARGE_INTEGER* ulFileSize);
 
 	bool	filelist_all();
+	bool	folderlist_all();
 
 	BOOL Connection();
 	BOOL SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, ULARGE_INTEGER& ulFileSize);
@@ -39,6 +40,7 @@ public:
 	void SetSockAddr(ULONG addr, USHORT port, int iServerNum, BOOL bIsN2NConnectionTiming);
 	void SetConnection(DWORD dwConnection);
 
+	BOOL GetMyPCLabel();
 	BOOL GetDesktopPath();
 	BOOL GetDocumentPath();
 

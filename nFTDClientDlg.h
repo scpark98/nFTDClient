@@ -19,6 +19,7 @@ public:
 	enum { IDD = IDD_NFTDCLIENT_DIALOG };
 #endif
 
+
 	int		connect();
 	//void	initialize();
 	//CSCProgressDlg		m_progressDlg;

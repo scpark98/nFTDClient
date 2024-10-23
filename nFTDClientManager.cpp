@@ -183,12 +183,16 @@ void CnFTDClientManager::run()
 			m_socket.DriveList(NULL, NULL);
 			logWrite(_T("nFTD_DriveList"));
 			break;
+		case nFTD_MyPC_Label:
+			m_socket.GetMyPCLabel();
+			logWrite(_T("nFTD_MyPC_Label"));
+			break;
 		case nFTD_DesktopPath:
-			//m_socket.GetDesktopPath();
+			m_socket.GetDesktopPath();
 			logWrite(_T("nFTD_DesktopPath"));
 			break;
 		case nFTD_DocumentPath:
-			//m_socket.GetDocumentPath();
+			m_socket.GetDocumentPath();
 			logWrite(_T("nFTD_DocumentPath"));
 			break;
 		case nFTD_ExecuteFile:
@@ -208,9 +212,15 @@ void CnFTDClientManager::run()
 			{
 				//m_hThread = CreateThread(NULL, 0, ThreadProcedure, (LPVOID)this, 0, &dw);
 			}
+			break;
 		case nFTD_FileList_All:
 			logWrite(_T("nFTD_FileList_All"));
 			m_socket.filelist_all();
+			break;
+		case nFTD_FolderList_All:
+			logWrite(_T("nFTD_FolderList_All"));
+			m_socket.folderlist_all();
+			break;
 		}
 	}
 
