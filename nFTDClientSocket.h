@@ -15,11 +15,11 @@ public:
 	CnFTDClientSocket();
 	virtual ~CnFTDClientSocket();
 
-	BOOL CreateDirectory(LPCTSTR lpPathName);
+	BOOL create_directory(LPCTSTR lpPathName);
 	BOOL Rename(LPCTSTR lpOldName, LPCTSTR lpNewName);
-	BOOL DeleteDirectory(LPCTSTR lpPath);
+	BOOL delete_directory(LPCTSTR lpPath);
 	BOOL DeleteFile(LPCTSTR lpPathName);
-	BOOL ChangeDirectory(LPCTSTR lpDirName);
+	BOOL change_directory(LPCTSTR lpDirName);
 	BOOL TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes);
 	BOOL RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes);
 	BOOL CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath);
@@ -40,9 +40,8 @@ public:
 	void SetSockAddr(ULONG addr, USHORT port, int iServerNum, BOOL bIsN2NConnectionTiming);
 	void SetConnection(DWORD dwConnection);
 
-	BOOL GetMyPCLabel();
-	BOOL GetDesktopPath();
-	BOOL GetDocumentPath();
+	BOOL get_system_label();
+	BOOL get_system_path();
 
 	BOOL ExecuteFile();
 	BOOL FileInfo(WIN32_FIND_DATA* pFileInfo);

@@ -24,7 +24,7 @@ CnFTDFileManager::~CnFTDFileManager()
 		FindClose(m_hFindFile);
 }
 
-BOOL CnFTDFileManager::CreateDirectory(LPCTSTR lpPathName)
+BOOL CnFTDFileManager::create_directory(LPCTSTR lpPathName)
 {
 	return ::CreateDirectory(lpPathName, NULL);
 }
@@ -35,7 +35,7 @@ BOOL CnFTDFileManager::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 	else return FALSE;
 }
 
-BOOL CnFTDFileManager::DeleteDirectory(LPCTSTR lpPath)
+BOOL CnFTDFileManager::delete_directory(LPCTSTR lpPath)
 {
 	SHFILEOPSTRUCT FileOp;
 
@@ -68,7 +68,7 @@ BOOL CnFTDFileManager::DeleteFile(LPCTSTR lpPathName)
 	return ::DeleteFile(lpPathName);
 }
 
-BOOL CnFTDFileManager::ChangeDirectory(LPCTSTR lpDirName)
+BOOL CnFTDFileManager::change_directory(LPCTSTR lpDirName)
 {
 	if(_tchdir(lpDirName) == 0) return TRUE;
 	else return FALSE;

@@ -15,11 +15,11 @@ public:
 	CnFTDFileManager();
 	virtual ~CnFTDFileManager();
 
-	BOOL CreateDirectory(LPCTSTR lpPathName);
+	BOOL create_directory(LPCTSTR lpPathName);
 	BOOL Rename(LPCTSTR lpOldName, LPCTSTR lpNewName);
-	BOOL DeleteDirectory(LPCTSTR lpPath);
+	BOOL delete_directory(LPCTSTR lpPath);
 	BOOL DeleteFile(LPCTSTR lpPathName);
-	BOOL ChangeDirectory(LPCTSTR lpDirName);
+	BOOL change_directory(LPCTSTR lpDirName);
 	BOOL TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes);
 	BOOL RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes);
 	BOOL CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath);

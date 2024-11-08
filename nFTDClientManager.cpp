@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "nFTDClientManager.h"
 
+#include <thread>
 #include "../../Common/Functions.h"
 
 CnFTDClientManager::CnFTDClientManager()
@@ -136,7 +137,7 @@ void CnFTDClientManager::run()
 		switch (ret.type)
 		{
 		case nFTD_CreateDirectory:
-			m_socket.CreateDirectory(NULL);
+			m_socket.create_directory(NULL);
 			logWrite(_T("nFTD_CreateDirectory"));
 			break;
 		case nFTD_Rename:
@@ -144,7 +145,7 @@ void CnFTDClientManager::run()
 			logWrite(_T("nFTD_Rename"));
 			break;
 		case nFTD_DeleteDirectory:
-			m_socket.DeleteDirectory(NULL);
+			m_socket.delete_directory(NULL);
 			logWrite(_T("nFTD_DeleteDirectory"));
 			break;
 		case nFTD_DeleteFile:
@@ -152,7 +153,7 @@ void CnFTDClientManager::run()
 			logWrite(_T("nFTD_DeleteFile"));
 			break;
 		case nFTD_ChangeDirectory:
-			m_socket.ChangeDirectory(NULL);
+			m_socket.change_directory(NULL);
 			logWrite(_T("nFTD_ChangeDirectory"));
 			break;
 		case nFTD_TotalSpace:
@@ -183,18 +184,22 @@ void CnFTDClientManager::run()
 			m_socket.DriveList(NULL, NULL);
 			logWrite(_T("nFTD_DriveList"));
 			break;
-		case nFTD_MyPC_Label:
-			m_socket.GetMyPCLabel();
-			logWrite(_T("nFTD_MyPC_Label"));
+		case nFTD_get_system_label:
+			m_socket.get_system_label();
+			logWrite(_T("nFTD_get_system_label"));
 			break;
-		case nFTD_DesktopPath:
-			m_socket.GetDesktopPath();
-			logWrite(_T("nFTD_DesktopPath"));
+		case nFTD_get_system_path:
+			m_socket.get_system_path();
+			logWrite(_T("nFTD_get_system_path"));
 			break;
-		case nFTD_DocumentPath:
-			m_socket.GetDocumentPath();
-			logWrite(_T("nFTD_DocumentPath"));
-			break;
+		//case nFTD_DesktopPath:
+		//	m_socket.GetDesktopPath();
+		//	logWrite(_T("nFTD_DesktopPath"));
+		//	break;
+		//case nFTD_DocumentPath:
+		//	m_socket.GetDocumentPath();
+		//	logWrite(_T("nFTD_DocumentPath"));
+		//	break;
 		case nFTD_ExecuteFile:
 			//m_socket.ExecuteFile();
 			logWrite(_T("nFTD_ExecuteFile"));
@@ -211,6 +216,8 @@ void CnFTDClientManager::run()
 			if (m_DataSocket.Connection())
 			{
 				//m_hThread = CreateThread(NULL, 0, ThreadProcedure, (LPVOID)this, 0, &dw);
+				std::thread th(&CnFTDClientManager::thread_data_socket, this);
+				th.detach();
 			}
 			break;
 		case nFTD_FileList_All:
@@ -237,4 +244,50 @@ void CnFTDClientManager::run()
 
 	logWrite(_T("End"));
 	TerminateThread(m_hThread, 0);
+}
+
+void CnFTDClientManager::thread_data_socket()
+{
+	msg ret;
+	ULARGE_INTEGER ulTemp;
+
+	while (true)
+	{
+		if (!m_DataSocket.RecvExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
+			break;
+
+		switch (ret.type)
+		{
+		case nFTD_CreateDirectory:		/*OutputDebugString(_T("Data Socket -- nFTD_CreateDirectory"));*/
+			if (!m_DataSocket.create_directory(NULL))
+			{
+				logWriteE(_T("create_directory ERROR"));
+			}
+			break;
+		case nFTD_ChangeDirectory:		/*OutputDebugString(_T("Data Socket -- nFTD_ChangeDirectory"));*/
+			if (!m_DataSocket.change_directory(NULL))
+			{
+				logWriteE(_T("change_directory ERROR"));
+			}
+			break;
+		case nFTD_FileTransfer:			/*OutputDebugString(_T("Data Socket -- nFTD_FileTransfer"));*/
+			if (!m_DataSocket.RecvFile(NULL, NULL, ulTemp))
+			{
+				logWriteE(_T("RecvFile ERROR"));
+			}
+			break;
+		case nFTD_FileTransferReq:		/*OutputDebugString(_T("Data Socket -- nFTD_FileTransferReq"));*/
+			if (!m_DataSocket.SendFile(NULL, NULL, ulTemp))
+			{
+				logWriteE(_T("SendFile ERROR"));
+			}
+			break;
+		case nFTD_FileList:				/*OutputDebugString(_T("Data Socket -- nFTD_FileList"));*/
+			if (!m_DataSocket.FileList(NULL))
+			{
+				logWriteE(_T("FileList ERROR"));
+			}
+			break;
+		}
+	}
 }

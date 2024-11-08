@@ -11,7 +11,8 @@ public:
 	void run();
 	BOOL SetConnection(CString lpCmdLine);
 	BOOL Connection();
-	static DWORD WINAPI ThreadProcedure(LPVOID lpVoid);
+	//static DWORD WINAPI ThreadProcedure(LPVOID lpVoid);
+	void	thread_data_socket();
 
 private:
 	CnFTDClientSocket m_socket;

@@ -226,7 +226,8 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		return FALSE;
 	}
 
-	LPTSTR lpPathName = new TCHAR[usLength + 1]; ZeroMemory(lpPathName, (usLength + 1) * sizeof(TCHAR));
+	LPTSTR lpPathName = new TCHAR[usLength + 1];
+	ZeroMemory(lpPathName, (usLength + 1) * sizeof(TCHAR));
 	if (!RecvExact((LPSTR)lpPathName, usLength, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -412,28 +413,32 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	ULARGE_INTEGER ulSize;
 	ULARGE_INTEGER ulExistFileSize;
 
+	//파일명 길이 수신
 	if (!RecvExact((LPSTR)&usLength, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
-	LPTSTR lpPathName = new TCHAR[usLength + 1]; ZeroMemory(lpPathName, (usLength + 1) * sizeof(TCHAR));
-	if (!RecvExact((LPSTR)lpPathName, usLength, BLASTSOCK_BUFFER))
+
+	//파일명 수신
+	//LPTSTR lpPathName = new TCHAR[usLength + 1]; ZeroMemory(lpPathName, (usLength + 1) * sizeof(TCHAR));
+	TCHAR path[MAX_PATH] = { 0, };
+	if (!RecvExact((LPSTR)path, usLength, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
 		return FALSE;
 	}
-	lpPathName[usLength / 2] = '\0';
-	CString fileName;
-	fileName.Format(_T("%s"), lpPathName);
 
+	//파일크기 수신
 	if (!RecvExact((LPSTR)&ulSize, sizeof(ULARGE_INTEGER), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-3 : %d "), GetLastError());
 		return FALSE;
 	}
 
-	HANDLE hFile = CreateFile(lpPathName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	CString sPath = convert_special_folder_to_real_path(path);
+
+	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		logWriteE(_T("CODE-4 : %d "), GetLastError());
@@ -445,12 +450,13 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			return FALSE;
 		}
 
-		delete[] lpPathName;
+		//delete[] lpPathName;
 		return FALSE;
 	}
 	else
 	{
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
+		//GetLastError() == ERROR_ALREADY_EXISTS)
+		if (false)
 		{
 			ret.type = nFTD_FileExist;
 			if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
@@ -478,12 +484,12 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			else if (ret.type == nFTD_FileOverWrite)
 			{
 				CloseHandle(hFile);
-				hFile = CreateFile(lpPathName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+				hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 			}
 			else if (ret.type == nFTD_FileIgnore)
 			{
 				CloseHandle(hFile);
-				delete[] lpPathName;
+				//delete[] lpPathName;
 				return TRUE;
 			}
 		}
@@ -521,7 +527,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		ulSize.QuadPart -= dwBytesRead;
 	} while (dwBytesRead == 4096);
 
-	delete[] lpPathName;
+	//delete[] lpPathName;
 	delete[] packet;
 	CloseHandle(hFile);
 
@@ -556,25 +562,28 @@ void CnFTDClientSocket::SetConnection(DWORD dwConnection)
 }
 
 
-BOOL CnFTDClientSocket::CreateDirectory(LPCTSTR lpPathName)
+BOOL CnFTDClientSocket::create_directory(LPCTSTR lpPathName)
 {
 	msg ret;
 	USHORT length;
-	LPTSTR PathName = new TCHAR[MAX_PATH];
-	ZeroMemory(PathName, MAX_PATH * sizeof(TCHAR));
+	TCHAR path[MAX_PATH] = { 0, };
+	//LPTSTR PathName = new TCHAR[MAX_PATH];
+	//ZeroMemory(PathName, MAX_PATH * sizeof(TCHAR));
 
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
-	if (!RecvExact((LPSTR)PathName, length, BLASTSOCK_BUFFER))
+	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
 		return FALSE;
 	}
 
-	if (m_FileManager.CreateDirectory(PathName))
+	CString sPath = convert_special_folder_to_real_path(path);
+
+	if (make_full_directory(sPath))
 	{
 		ret.type = nFTD_OK;
 	}
@@ -590,12 +599,15 @@ BOOL CnFTDClientSocket::CreateDirectory(LPCTSTR lpPathName)
 			ret.type = nFTD_ERROR;
 		}
 	}
+
 	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-4 : %d "), GetLastError());
 		return FALSE;
 	}
-	delete[] PathName;
+
+	//delete[] PathName;
+
 	if (ret.type == nFTD_OK)
 	{
 		return TRUE;
@@ -665,7 +677,7 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 	}
 }
 
-BOOL CnFTDClientSocket::DeleteDirectory(LPCTSTR lpPath)
+BOOL CnFTDClientSocket::delete_directory(LPCTSTR lpPath)
 {
 	msg ret;
 	USHORT length;
@@ -683,7 +695,7 @@ BOOL CnFTDClientSocket::DeleteDirectory(LPCTSTR lpPath)
 		return FALSE;
 	}
 
-	if (m_FileManager.DeleteDirectory(PathName))
+	if (m_FileManager.delete_directory(PathName))
 	{
 		ret.type = nFTD_OK;
 	}
@@ -803,7 +815,7 @@ BOOL CnFTDClientSocket::NextDriveList(PUINT pDriveType, LPSTR lpDriveName)
 	return FALSE;
 }
 
-BOOL CnFTDClientSocket::ChangeDirectory(LPCTSTR lpDirName)
+BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 {
 	msg ret;
 	USHORT length;
@@ -821,29 +833,29 @@ BOOL CnFTDClientSocket::ChangeDirectory(LPCTSTR lpDirName)
 		return FALSE;
 	}
 
-	if (DirName == get_system_label(CSIDL_DESKTOP))//_tcscmp(DirName, _T("바탕화면")) == 0)
+	if (DirName == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DESKTOP))//_tcscmp(DirName, _T("바탕화면")) == 0)
 	{
 		//TCHAR path[MAX_PATH];
 		//neturoService::GetSpectialPath(path, GUID_FOLDER_DESKTOP);
 		//_tcscpy(DirName, path);
 
-		_stprintf(DirName, _T("%s"), get_known_folder(CSIDL_DESKTOP));
+		_stprintf(DirName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_path(CSIDL_DESKTOP));
 	}
-	else if (DirName == get_system_label(CSIDL_MYDOCUMENTS))// _tcscmp(DirName, _T("내문서")) == 0)
+	else if (DirName == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_MYDOCUMENTS))// _tcscmp(DirName, _T("내문서")) == 0)
 	{
 		//TCHAR path[MAX_PATH];
 		//neturoService::GetSpectialPath(path, GUID_FOLDER_MYDOC);
 		//_tcscpy(DirName, path);
-		_stprintf(DirName, _T("%s"), get_known_folder(CSIDL_MYDOCUMENTS));
+		_stprintf(DirName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_path(CSIDL_MYDOCUMENTS));
 	}
-	else if (DirName == get_system_label(CSIDL_DRIVES))	//내 PC
+	else if (DirName == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))	//내 PC
 	{
 		ret.type = nFTD_OK;
 	}
 
-	if (DirName != get_system_label(CSIDL_DRIVES))
+	if (DirName != theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))
 	{
-		if (m_FileManager.ChangeDirectory(DirName))
+		if (m_FileManager.change_directory(DirName))
 			ret.type = nFTD_OK;
 		else
 			ret.type = nFTD_ERROR;
@@ -980,35 +992,86 @@ BOOL CnFTDClientSocket::CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath)
 	}
 }
 
-BOOL CnFTDClientSocket::GetMyPCLabel()
+BOOL CnFTDClientSocket::get_system_label()
 {
-	WIN32_FIND_DATA	FindFileData;
-	TCHAR path[MAX_PATH];
+	std::map<int, CString>* map = theApp.m_shell_imagelist.m_volume[0].get_label_map();
+	std::map<int, CString>::iterator it = map->begin();
 
-	ZeroMemory(path, MAX_PATH * sizeof(TCHAR));
-
-	_stprintf(path, _T("%s"), get_system_label(CSIDL_DRIVES));
-
-	msgFileInfo msgFindFileData;
-	ZeroMemory(&msgFindFileData, sizeof(msgFileInfo));
-
-	msgFindFileData.type = nFTD_OK;
-	msgFindFileData.length = _tcslen(path) * 2;
-
-	if (!SendExact((LPSTR)&msgFindFileData, sz_msgFileInfo, BLASTSOCK_BUFFER))
+	for (; it != map->end(); it++)
 	{
-		logWriteE(_T("CODE-1 : %d "), GetLastError());
-		return FALSE;
+		//csidl을 보내고
+		if (!SendExact((LPSTR) & (it->first), sizeof(int), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-1 : %d"), GetLastError());
+			return FALSE;
+		}
+
+		//해당하는 레이블 문자열의 길이를 보내고
+		int len = _tcslen(it->second) * 2;
+		if (!SendExact((LPSTR)&len, sizeof(int), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-2 : %d"), GetLastError());
+			return FALSE;
+		}
+
+		//실제 문자열을 보낸다
+		if (!SendExact((LPSTR)(LPCTSTR)(it->second), len, BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-3 : %d"), GetLastError());
+			return FALSE;
+		}
 	}
-	if (!SendExact((LPSTR)path, msgFindFileData.length, BLASTSOCK_BUFFER))
+
+	int end = -1;
+	if (!SendExact((LPSTR)&end, sizeof(int), BLASTSOCK_BUFFER))
 	{
-		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		logWriteE(_T("CODE-4 : %d"), GetLastError());
 		return FALSE;
 	}
 
 	return TRUE;
 }
 
+BOOL CnFTDClientSocket::get_system_path()
+{
+	std::map<int, CString>* map = theApp.m_shell_imagelist.m_volume[0].get_path_map();
+	std::map<int, CString>::iterator it = map->begin();
+
+	for (; it != map->end(); it++)
+	{
+		//csidl을 보내고
+		if (!SendExact((LPSTR) & (it->first), sizeof(int), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-1 : %d"), GetLastError());
+			return FALSE;
+		}
+
+		//해당하는 문자열의 길이를 보내고
+		int len = _tcslen(it->second) * 2;
+		if (!SendExact((LPSTR)&len, sizeof(int), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-2 : %d"), GetLastError());
+			return FALSE;
+		}
+
+		//실제 문자열을 보낸다
+		if (!SendExact((LPSTR)(LPCTSTR)(it->second), len, BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-3 : %d"), GetLastError());
+			return FALSE;
+		}
+	}
+
+	int end = -1;
+	if (!SendExact((LPSTR)&end, sizeof(int), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-4 : %d"), GetLastError());
+		return FALSE;
+	}
+
+	return TRUE;
+}
+/*
 BOOL CnFTDClientSocket::GetDesktopPath()
 {
 	WIN32_FIND_DATA	FindFileData;
@@ -1068,7 +1131,7 @@ BOOL CnFTDClientSocket::GetDocumentPath()
 
 	return TRUE;
 }
-
+*/
 BOOL CnFTDClientSocket::ExecuteFile()
 {
 	try
@@ -1444,20 +1507,23 @@ bool CnFTDClientSocket::filelist_all()
 	std::deque<WIN32_FIND_DATA> dq;
 
 	//내 PC 를 선택한 경우는 별도 처리
-	if (sPath == get_system_label(CSIDL_DRIVES))
+	if (sPath == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))
 	{
 		//0:내 PC의 label, 1:바탕화면 경로, 2:문서 경로, 3:C드라이브 volume, 4:D드라이브 volume...
-		for (i = 3; i < theApp.m_shell_imagelist.get_drive_list()->size(); i++)
+		for (i = 0; i < theApp.m_shell_imagelist.m_volume[0].get_drive_list()->size(); i++)
 		{
 			WIN32_FIND_DATA data;
-			memset(&data, 0, sizeof(WIN32_FIND_DATA));
+			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
-			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.get_drive_list()->at(i));
+			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_drive_list()->at(i));
 			dq.push_back(data);
 		}
 	}
 	else
 	{
+		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
+		sPath = convert_special_folder_to_real_path(sPath);
+
 		find_all_files(sPath, &dq, _T("*"), true);
 
 		//dot, 숨김파일은 삭제.
@@ -1521,26 +1587,26 @@ bool CnFTDClientSocket::folderlist_all()
 
 	CString sPath = path;
 	std::deque<WIN32_FIND_DATA> dq;
+	std::deque<CString> *drive_list = theApp.m_shell_imagelist.m_volume[0].get_drive_list();
+	WIN32_FIND_DATA data;
+	length = sizeof(WIN32_FIND_DATA);
 
-	//내 PC 를 선택한 경우는 별도 처리
-	if (sPath == get_system_label(CSIDL_DRIVES))
+
+	//내 PC 를 선택한 경우는 드라이브 목록을 리턴하고
+	if (sPath == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))
 	{
-		//0:내 PC의 label, 1:바탕화면 경로, 2:문서 경로, 3:C드라이브 volume, 4:D드라이브 volume...
-		for (i = 3; i < theApp.m_shell_imagelist.get_drive_list()->size(); i++)
+		for (i = 0; i < drive_list->size(); i++)
 		{
-			WIN32_FIND_DATA data;
-			memset(&data, 0, sizeof(WIN32_FIND_DATA));
+			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
-			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.get_drive_list()->at(i));
+			_stprintf(data.cFileName, _T("%s"), drive_list->at(i));
 			dq.push_back(data);
 		}
 	}
 	else
 	{
-		if (sPath == get_system_label(CSIDL_DESKTOP))
-			sPath = theApp.m_shell_imagelist.get_drive_list()->at(1);
-		else if (sPath == get_system_label(CSIDL_MYDOCUMENTS))
-			sPath = theApp.m_shell_imagelist.get_drive_list()->at(2);
+		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
+		sPath = convert_special_folder_to_real_path(sPath);
 
 		find_all_files(sPath, &dq, _T("*"), true);
 
@@ -1556,8 +1622,6 @@ bool CnFTDClientSocket::folderlist_all()
 			}
 		}
 	}
-
-	length = sizeof(WIN32_FIND_DATA);
 
 	for (i = 0; i < dq.size(); i++)
 	{
