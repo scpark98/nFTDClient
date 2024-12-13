@@ -192,7 +192,8 @@ int CnFTDClientDlg::connect()
 	// standalone 인지 판단.
 	BOOL bIsStandAlone = find_parameter(_T("-standalone"));
 
-	CString params = GetCommandLine();
+	CString cmd = GetCommandLine();
+	logWrite(_T("cmd = %s"), cmd);
 	/*
 	LPSTR _lpCmdLine = new CHAR[strlen(lpCmdLine) + 1];
 	ZeroMemory(_lpCmdLine, strlen(lpCmdLine) + 1);
@@ -235,7 +236,7 @@ int CnFTDClientDlg::connect()
 	}
 #endif
 
-	if (!m_client_manager.SetConnection(params))
+	if (!m_client_manager.SetConnection(cmd))
 	{
 		/*
 		LoadString(g_hRes, NFTDCLIENT_IDS_MSGBOX_RUN1, buffer, 256);

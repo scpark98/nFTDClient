@@ -301,8 +301,19 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	// file send
 	delete[] lpPathName;
 
+	//0byte 파일일 경우는 아래의 do~while을 들어가지 않아야 한다.
+	if (ulFileSize.QuadPart == 0)
+	{
+		logWriteE(_T("0 byte file. just return."));
+		CloseHandle(hFile);
+		return TRUE;
+	}
+
+	//실제 전송 시작
+#define BUFFER_SIZE 1024 * 12
+
 	DWORD dwBytesRead;
-	LPSTR packet = new CHAR[4096];
+	LPSTR packet = new CHAR[BUFFER_SIZE];
 
 	DWORD dwStartTicks = GetTickCount();
 	ULONGLONG sendedSize = 0;
@@ -315,7 +326,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 
 	do
 	{
-		ReadFile(hFile, packet, 4096, &dwBytesRead, NULL);
+		ReadFile(hFile, packet, BUFFER_SIZE, &dwBytesRead, NULL);
 
 		// 20170404 : 파일전송 도중 파일길이 늘어나면 파일 섞일 가능성이 있다.
 		//            사전에 약속한길이만큼만 보내준다.
@@ -379,7 +390,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		{
 			break;
 		}
-	} while (dwBytesRead == 4096);
+	} while (dwBytesRead == BUFFER_SIZE);
 
 	delete[] packet;
 	CloseHandle(hFile);
@@ -413,14 +424,14 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	ULARGE_INTEGER ulSize;
 	ULARGE_INTEGER ulExistFileSize;
 
-	//파일명 길이 수신
+	//fullpath length 수신
 	if (!RecvExact((LPSTR)&usLength, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
 
-	//파일명 수신
+	//fullpath 수신
 	//LPTSTR lpPathName = new TCHAR[usLength + 1]; ZeroMemory(lpPathName, (usLength + 1) * sizeof(TCHAR));
 	TCHAR path[MAX_PATH] = { 0, };
 	if (!RecvExact((LPSTR)path, usLength, BLASTSOCK_BUFFER))
@@ -455,8 +466,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	}
 	else
 	{
-		//GetLastError() == ERROR_ALREADY_EXISTS)
-		if (false)
+		if (GetLastError() == ERROR_ALREADY_EXISTS)
 		{
 			ret.type = nFTD_FileExist;
 			if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
@@ -503,6 +513,14 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			}
 		}
 	}
+
+	//0byte 파일일 경우는 아래의 do~while을 들어가지 않아야 한다.
+	if (ulSize.QuadPart == 0)
+	{
+		CloseHandle(hFile);
+		return TRUE;
+	}
+
 
 	// transfer
 	DWORD dwBytesRead = 4096;
@@ -1140,6 +1158,7 @@ BOOL CnFTDClientSocket::ExecuteFile()
 		USHORT length;
 		LPTSTR DirName = new TCHAR[MAX_PATH];
 		ZeroMemory(DirName, MAX_PATH * sizeof(TCHAR));
+
 		if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-1 : %d "), GetLastError());
@@ -1487,23 +1506,32 @@ bool CnFTDClientSocket::filelist_all()
 {
 	int i;
 	msg ret;
+	bool recursive = false;
 	USHORT length;
-	LPTSTR path = new TCHAR[MAX_PATH];
-	ZeroMemory(path, MAX_PATH * sizeof(TCHAR));
+	LPTSTR path[MAX_PATH] = { 0, };
 
+	//path 길이 수신
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return false;
 	}
 
+	//path 수신
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
 		return false;
 	}
 
-	CString sPath = path;
+	//recursive 여부 전송
+	if (!RecvExact((LPSTR)&recursive, sizeof(bool), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-3 : %d "), GetLastError());
+		return false;
+	}
+
+	CString sPath = (LPTSTR)path;
 	std::deque<WIN32_FIND_DATA> dq;
 
 	//내 PC 를 선택한 경우는 별도 처리
@@ -1524,7 +1552,7 @@ bool CnFTDClientSocket::filelist_all()
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
 		sPath = convert_special_folder_to_real_path(sPath);
 
-		find_all_files(sPath, &dq, _T("*"), true);
+		find_all_files(sPath, &dq, _T("*"), true, recursive);
 
 		//dot, 숨김파일은 삭제.
 		for (i = dq.size() - 1; i >= 0; i--)
@@ -1646,4 +1674,87 @@ bool CnFTDClientSocket::folderlist_all()
 	}
 
 	return true;
+}
+
+bool CnFTDClientSocket::file_command()
+{
+	msg ret;
+	USHORT length;
+	int cmd = -1;
+	LPTSTR param0[MAX_PATH] = { 0, };
+	LPTSTR param1[MAX_PATH] = { 0, };
+
+	//명령 수신
+	if (!RecvExact((LPSTR)&cmd, sizeof(int), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	//param0 길이 수신
+	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return false;
+	}
+
+	//param0 수신
+	if (!RecvExact((LPSTR)param0, length, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	if (cmd == file_cmd_rename)
+	{
+		//param1 길이 수신
+		if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-1 : %d "), GetLastError());
+			return false;
+		}
+
+		//param0 수신
+		if (!RecvExact((LPSTR)param1, length, BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-2 : %d "), GetLastError());
+			return false;
+		}
+	}
+
+	TRACE(_T("cmd = %d, param = %s, param1 = %s\n"), cmd, param0, param1);
+
+	bool res = false;
+	if (cmd == file_cmd_open)
+	{
+		if (PathFileExists((LPTSTR)param0))
+		{
+			ShellExecute(NULL, _T("open"), (LPTSTR)param0, 0, 0, SW_SHOWNORMAL);
+			res = true;
+		}
+	}
+	else if (cmd == file_cmd_rename)
+	{
+		res = MoveFile((LPTSTR)param0, (LPTSTR)param1);
+	}
+	else if (cmd == file_cmd_delete)
+	{
+		res = DeleteFile((LPTSTR)param0);
+	}
+	else if (cmd == file_cmd_property)
+	{
+		res = show_file_property_window((LPTSTR)param0);
+	}
+	else if (cmd == file_cmd_new_folder)
+	{
+		res = make_full_directory((LPTSTR)param0);
+	}
+
+	//명령 처리 결과 리턴
+	ret.type = (res ? nFTD_OK : nFTD_ERROR);
+	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-9 : %d "), GetLastError());
+		return FALSE;
+	}
 }

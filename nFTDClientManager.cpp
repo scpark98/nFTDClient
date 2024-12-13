@@ -121,7 +121,7 @@ void CnFTDClientManager::run()
 
 	// 현재 폴더의 경로를 디폴트로 c:\\ 로 한다.
 	SetCurrentDirectory(_T("c:\\"));
-	TCHAR temp[1024];
+	TCHAR temp[1024] = { 0, };
 
 	while (1)
 	{
@@ -139,6 +139,10 @@ void CnFTDClientManager::run()
 		case nFTD_CreateDirectory:
 			m_socket.create_directory(NULL);
 			logWrite(_T("nFTD_CreateDirectory"));
+			break;
+		case nFTD_file_command :
+			m_socket.file_command();
+			logWrite(_T("nFTD_file_command"));
 			break;
 		case nFTD_Rename:
 			m_socket.Rename(NULL, NULL);
@@ -201,7 +205,7 @@ void CnFTDClientManager::run()
 		//	logWrite(_T("nFTD_DocumentPath"));
 		//	break;
 		case nFTD_ExecuteFile:
-			//m_socket.ExecuteFile();
+			m_socket.ExecuteFile();
 			logWrite(_T("nFTD_ExecuteFile"));
 			break;
 		case nFTD_FileInfo:
@@ -220,12 +224,12 @@ void CnFTDClientManager::run()
 				th.detach();
 			}
 			break;
-		case nFTD_FileList_All:
-			logWrite(_T("nFTD_FileList_All"));
+		case nFTD_filelist_all:
+			logWrite(_T("nFTD_filelist_all"));
 			m_socket.filelist_all();
 			break;
-		case nFTD_FolderList_All:
-			logWrite(_T("nFTD_FolderList_All"));
+		case nFTD_folderlist_all:
+			logWrite(_T("nFTD_folderlist_all"));
 			m_socket.folderlist_all();
 			break;
 		}
