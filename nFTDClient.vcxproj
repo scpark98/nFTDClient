@@ -181,9 +181,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -209,11 +211,13 @@
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibD.lib;cryptlib.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>../blastsock/Debug;../blastsock/cryptopp561/Win32/Output/Debug;</AdditionalLibraryDirectories>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -238,9 +242,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -265,9 +271,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -294,11 +302,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -326,6 +336,7 @@
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -333,6 +344,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibR.lib;cryptlib.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>../blastsock/Release;../blastsock/cryptopp561/Win32/Output/Release;</AdditionalLibraryDirectories>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -359,11 +371,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -390,11 +404,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <StackReserveSize>41943040</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

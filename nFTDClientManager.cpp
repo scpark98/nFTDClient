@@ -1,8 +1,9 @@
 #include "pch.h"
+
 #include "nFTDClientManager.h"
+#include "../../Common/Functions.h"
 
 #include <thread>
-#include "../../Common/Functions.h"
 
 CnFTDClientManager::CnFTDClientManager()
 {

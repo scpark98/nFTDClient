@@ -2,13 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "pch.h"
 #include "nFTDFileManager.h"
 
 #include "stdio.h"
 #include "Shellapi.h"
 #include <direct.h>
 #include "tchar.h"
+
+#include "../../Common/Functions.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -70,8 +73,15 @@ BOOL CnFTDFileManager::DeleteFile(LPCTSTR lpPathName)
 
 BOOL CnFTDFileManager::change_directory(LPCTSTR lpDirName)
 {
-	if(_tchdir(lpDirName) == 0) return TRUE;
-	else return FALSE;
+	CString path = convert_special_folder_to_real_path(lpDirName);
+
+	if (_tchdir(path) == 0)
+	{
+		TRACE(_T("cur dir = %s\n"), path);
+		return TRUE;
+	}
+	
+	return FALSE;
 }
 
 BOOL CnFTDFileManager::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes)

@@ -8,7 +8,6 @@
 #define CONNECTION_CONNECT	0	
 #define CONNECTION_LISTEN	1
 
-
 class CnFTDClientSocket : public blastsock
 {
 public:
