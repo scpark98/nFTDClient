@@ -1688,6 +1688,8 @@ bool CnFTDClientSocket::file_command()
 	int cmd = -1;
 	LPTSTR param0[MAX_PATH] = { 0, };
 	LPTSTR param1[MAX_PATH] = { 0, };
+	CString sParam0;
+	CString sParam1;
 
 	//명령 수신
 	if (!RecvExact((LPSTR)&cmd, sizeof(int), BLASTSOCK_BUFFER))
@@ -1710,6 +1712,9 @@ bool CnFTDClientSocket::file_command()
 		return false;
 	}
 
+	sParam0 = convert_special_folder_to_real_path((LPTSTR)param0);
+
+
 	if (cmd == file_cmd_rename)
 	{
 		//param1 길이 수신
@@ -1725,39 +1730,42 @@ bool CnFTDClientSocket::file_command()
 			logWriteE(_T("CODE-2 : %d "), GetLastError());
 			return false;
 		}
+
+		sParam1 = (LPTSTR)param1;
+		sParam1 = convert_special_folder_to_real_path((LPTSTR)param1);
 	}
 
-	TRACE(_T("cmd = %d, param = %s, param1 = %s\n"), cmd, param0, param1);
+	TRACE(_T("cmd = %d, param = %s, param1 = %s\n"), cmd, sParam0, sParam1);
 
 	bool res = false;
 	if (cmd == file_cmd_open)
 	{
-		if (PathFileExists((LPTSTR)param0))
+		if (PathFileExists(sParam0))
 		{
-			ShellExecute(NULL, _T("open"), (LPTSTR)param0, 0, 0, SW_SHOWNORMAL);
+			ShellExecute(NULL, _T("open"), sParam0, 0, 0, SW_SHOWNORMAL);
 			res = true;
 		}
 	}
 	else if (cmd == file_cmd_open_explorer)
 	{
 		res = true;
-		ShellExecute(NULL, _T("explore"), (LPTSTR)param0, 0, 0, SW_SHOWNORMAL);
+		ShellExecute(NULL, _T("explore"), sParam0, 0, 0, SW_SHOWNORMAL);
 	}
 	else if (cmd == file_cmd_rename)
 	{
-		res = MoveFile((LPTSTR)param0, (LPTSTR)param1);
+		res = MoveFile(sParam0, sParam1);
 	}
 	else if (cmd == file_cmd_delete)
 	{
-		res = delete_file((LPTSTR)param0, true);
+		res = delete_file(sParam0, true);
 	}
 	else if (cmd == file_cmd_property)
 	{
-		res = show_file_property_window((LPTSTR)param0);
+		res = show_file_property_window(sParam0);
 	}
 	else if (cmd == file_cmd_new_folder)
 	{
-		res = make_full_directory((LPTSTR)param0);
+		res = make_full_directory(sParam0);
 	}
 
 	//명령 처리 결과 리턴
