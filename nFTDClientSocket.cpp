@@ -1635,26 +1635,48 @@ bool CnFTDClientSocket::folderlist_all()
 			_stprintf(data.cFileName, _T("%s"), drive_list->at(i));
 			dq.push_back(data);
 		}
+
+		ret.type = nFTD_OK;
 	}
 	else
 	{
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
 		sPath = convert_special_folder_to_real_path(sPath);
 
-		find_all_files(sPath, &dq, _T("*"), true);
-
-		//디렉토리만 남긴다. (dot, 숨김파일, 단순파일은 삭제)
-		for (i = dq.size() - 1; i >= 0; i--)
+		if (!PathFileExists(sPath) || !PathIsDirectory(sPath))
 		{
-			if (dq[i].dwFileAttributes & FILE_ATTRIBUTE_HIDDEN ||
-				!(dq[i].dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ||
-				_tcscmp(dq[i].cFileName, _T(".")) == 0 ||
-				_tcscmp(dq[i].cFileName, _T("..")) == 0)
+			//존재하지 않을 경우
+			ret.type = nFTD_ERROR;
+		}
+		else
+		{
+			ret.type = nFTD_OK;
+
+			find_all_files(sPath, &dq, _T("*"), true);
+
+			//디렉토리만 남긴다. (dot, 숨김파일, 단순파일은 삭제)
+			for (i = dq.size() - 1; i >= 0; i--)
 			{
-				dq.erase(dq.begin() + i);
+				if (dq[i].dwFileAttributes & FILE_ATTRIBUTE_HIDDEN ||
+					!(dq[i].dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ||
+					_tcscmp(dq[i].cFileName, _T(".")) == 0 ||
+					_tcscmp(dq[i].cFileName, _T("..")) == 0)
+				{
+					dq.erase(dq.begin() + i);
+				}
 			}
 		}
 	}
+
+	//준비 결과 발신
+	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d"), GetLastError());
+		return false;
+	}
+
+	if (ret.type == nFTD_ERROR)
+		return false;
 
 	for (i = 0; i < dq.size(); i++)
 	{
