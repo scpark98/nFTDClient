@@ -186,6 +186,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -218,6 +219,7 @@
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibD.lib;cryptlib.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>../blastsock/Debug;../blastsock/cryptopp561/Win32/Output/Debug;</AdditionalLibraryDirectories>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -247,6 +249,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -276,6 +279,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -309,6 +313,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -345,6 +350,7 @@
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibR.lib;cryptlib.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>../blastsock/Release;../blastsock/cryptopp561/Win32/Output/Release;</AdditionalLibraryDirectories>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -378,6 +384,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -411,6 +418,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <StackReserveSize>41943040</StackReserveSize>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

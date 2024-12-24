@@ -669,10 +669,10 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 {
 	msg ret;
 	USHORT length1, length2;
-	LPTSTR OldPathName = new TCHAR[MAX_PATH];
-	ZeroMemory(OldPathName, MAX_PATH * sizeof(TCHAR));
-	LPTSTR NewPathName = new TCHAR[MAX_PATH];
-	ZeroMemory(NewPathName, MAX_PATH * sizeof(TCHAR));
+	TCHAR OldPathName[MAX_PATH] = { 0, };
+	//ZeroMemory(OldPathName, MAX_PATH * sizeof(TCHAR));
+	TCHAR NewPathName[MAX_PATH] = { 0, };
+	//ZeroMemory(NewPathName, MAX_PATH * sizeof(TCHAR));
 
 	if (!RecvExact((LPSTR)&length1, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
@@ -709,8 +709,8 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 		logWriteE(_T("CODE-6 : %d "), GetLastError());
 		return FALSE;
 	}
-	delete[] OldPathName;
-	delete[] NewPathName;
+	//delete[] OldPathName;
+	//delete[] NewPathName;
 
 	if (ret.type == nFTD_OK)
 	{
@@ -1772,6 +1772,10 @@ bool CnFTDClientSocket::file_command()
 	{
 		res = true;
 		ShellExecute(NULL, _T("explore"), sParam0, 0, 0, SW_SHOWNORMAL);
+	}
+	else if (cmd == file_cmd_new_folder)
+	{
+		res = make_full_directory(sParam0);
 	}
 	else if (cmd == file_cmd_rename)
 	{
