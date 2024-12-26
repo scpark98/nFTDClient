@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CnFTDClientDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_WINDOWPOSCHANGED()
+	ON_REGISTERED_MESSAGE(Message_CnFTDClientSocket, CnFTDClientDlg::on_message_from_CnFTDClientSocket)
 END_MESSAGE_MAP()
 
 
@@ -111,12 +112,20 @@ BOOL CnFTDClientDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	RestoreWindowPosition(&theApp, this);
 
-
 	std::thread t(&CnFTDClientDlg::thread_connect, this);
 	t.detach();
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
+
+LRESULT	CnFTDClientDlg::on_message_from_CnFTDClientSocket(WPARAM wParam, LPARAM lParam)
+{
+	std::deque<CString> dq = *(std::deque<CString>*)wParam;
+	logWrite(_T("show file property window : %s and total %d files."), dq[0], dq.size());
+	show_property_window(dq);
+	return 0;
+}
+
 
 void CnFTDClientDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {

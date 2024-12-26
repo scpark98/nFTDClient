@@ -8,11 +8,15 @@
 #define CONNECTION_CONNECT	0	
 #define CONNECTION_LISTEN	1
 
+static const UINT Message_CnFTDClientSocket = ::RegisterWindowMessage(_T("MessageString_CnFTDClientSocket"));
+
 class CnFTDClientSocket : public blastsock
 {
 public:
 	CnFTDClientSocket();
 	virtual ~CnFTDClientSocket();
+
+	bool	show_property(std::deque<CString> dq);
 
 	BOOL create_directory(LPCTSTR lpPathName);
 

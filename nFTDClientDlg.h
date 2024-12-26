@@ -19,11 +19,12 @@ public:
 	enum { IDD = IDD_NFTDCLIENT_DIALOG };
 #endif
 
-
 	int		connect();
 	//void	initialize();
 	//CSCProgressDlg		m_progressDlg;
 	void	thread_connect();
+
+	LRESULT		on_message_from_CnFTDClientSocket(WPARAM wParam, LPARAM lParam);
 
 protected:
 	CnFTDClientManager	m_client_manager;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "nFTDClient.h"
+#include "nFTDClientDlg.h"
 #include "nFTDClientSocket.h"
 
 #include "../../Common/Functions.h"
@@ -1712,6 +1713,7 @@ bool CnFTDClientSocket::file_command()
 	LPTSTR param1[MAX_PATH] = { 0, };
 	CString sParam0;
 	CString sParam1;
+	std::deque<CString> dq;
 
 	//명령 수신
 	if (!RecvExact((LPSTR)&cmd, sizeof(int), BLASTSOCK_BUFFER))
@@ -1720,44 +1722,73 @@ bool CnFTDClientSocket::file_command()
 		return false;
 	}
 
-	//param0 길이 수신
-	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	//속성은 여러파일이 될 수 있으므로 n개의 파일명을 받는다.
+	if (cmd == file_cmd_property)
 	{
-		logWriteE(_T("CODE-1 : %d "), GetLastError());
-		return false;
+		while (true)
+		{
+			TCHAR fullpath[MAX_PATH] = { 0, };
+
+			//길이 수신
+			if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+			{
+				logWriteE(_T("CODE-1 : %d "), GetLastError());
+				return false;
+			}
+
+			if (length == 0)
+				break;
+
+			//fullpath 수신
+			if (!RecvExact((LPSTR)fullpath, length, BLASTSOCK_BUFFER))
+			{
+				logWriteE(_T("CODE-2 : %d "), GetLastError());
+				return false;
+			}
+
+			dq.push_back(convert_special_folder_to_real_path(fullpath));
+		}
 	}
-
-	//param0 수신
-	if (!RecvExact((LPSTR)param0, length, BLASTSOCK_BUFFER))
+	else
 	{
-		logWriteE(_T("CODE-2 : %d "), GetLastError());
-		return false;
-	}
-
-	sParam0 = convert_special_folder_to_real_path((LPTSTR)param0);
-
-
-	if (cmd == file_cmd_rename)
-	{
-		//param1 길이 수신
+		//param0 길이 수신
 		if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-1 : %d "), GetLastError());
 			return false;
 		}
 
-		//param1 수신
-		if (!RecvExact((LPSTR)param1, length, BLASTSOCK_BUFFER))
+		//param0 수신
+		if (!RecvExact((LPSTR)param0, length, BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-2 : %d "), GetLastError());
 			return false;
 		}
 
-		sParam1 = (LPTSTR)param1;
-		sParam1 = convert_special_folder_to_real_path((LPTSTR)param1);
+		sParam0 = convert_special_folder_to_real_path((LPTSTR)param0);
+
+		if (cmd == file_cmd_rename)
+		{
+			//param1 길이 수신
+			if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+			{
+				logWriteE(_T("CODE-1 : %d "), GetLastError());
+				return false;
+			}
+
+			//param1 수신
+			if (!RecvExact((LPSTR)param1, length, BLASTSOCK_BUFFER))
+			{
+				logWriteE(_T("CODE-2 : %d "), GetLastError());
+				return false;
+			}
+
+			sParam1 = (LPTSTR)param1;
+			sParam1 = convert_special_folder_to_real_path((LPTSTR)param1);
+		}
 	}
 
-	TRACE(_T("cmd = %d, param = %s, param1 = %s\n"), cmd, sParam0, sParam1);
+	logWrite(_T("cmd = %d, sParam0 = %s, sParam1 = %s\n"), cmd, sParam0, sParam1);
 
 	bool res = false;
 	if (cmd == file_cmd_open)
@@ -1785,13 +1816,18 @@ bool CnFTDClientSocket::file_command()
 	{
 		res = delete_file(sParam0, true);
 	}
-	else if (cmd == file_cmd_property)
-	{
-		res = show_file_property_window(sParam0);
-	}
 	else if (cmd == file_cmd_new_folder)
 	{
 		res = make_full_directory(sParam0);
+	}
+	else if (cmd == file_cmd_property)
+	{
+		//thread에서 호출해서인지 여기서 직접 show_property_window()를 부르면 실패한다. main에서 호출해야 한다.
+		//res = show_property(std::deque<CString> { sParam0 });
+		//res = show_property(std::deque<CString> { _T("C:\\") });
+		logWrite(_T("show file property window : %s and total %d files."), dq[0], dq.size());
+		res = true;
+		::SendMessage(((CnFTDClientDlg*)AfxGetApp()->GetMainWnd())->m_hWnd, Message_CnFTDClientSocket, (WPARAM)&dq, 0);
 	}
 
 	//명령 처리 결과 리턴
