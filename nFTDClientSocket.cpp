@@ -1838,5 +1838,5 @@ bool CnFTDClientSocket::file_command()
 		return false;
 	}
 
-	return false;
+	return true;
 }
