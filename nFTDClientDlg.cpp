@@ -255,22 +255,22 @@ int CnFTDClientDlg::connect()
 		return 0;
 	}
 
-	logWrite(_T("[nFTDClient::WinMain][Info] SetConnection completed."));
+	logWrite(_T("SetConnection completed."));
 
 	// rsa 키 생성
 	neturoCrypto crypt;
 	crypt.GenerateRSAKey(1024, g_rsakey.pvk, g_rsakey.pbk);
-	logWrite(_T("[nFTDClient::WinMain][Info] Crypt"));
+	logWrite(_T("Crypt"));
 
 	if (!m_client_manager.Connection())
 	{
 		//LoadString(g_hRes, NFTDCLIENT_IDS_MSGBOX_RUN2, buffer, 256);
 		//LoadString(g_hRes, NFTDCLIENT_IDS_MSGBOX_TITLE, buffer2, 256);
 		//MessageBox(NULL, buffer, buffer2, 0);
-		AfxMessageBox(_T("ClientManager.Connection() failed"));
+		AfxMessageBox(_T("m_client_manager.Connection() failed"));
 		return 0;
 	}
-	logWrite(_T("[nFTDClient::WinMain][Info] Connection completed."));
+	logWrite(_T("Connection completed."));
 
 	return 1;
 }

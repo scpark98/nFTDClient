@@ -74,6 +74,7 @@ BOOL CnFTDFileManager::DeleteFile(LPCTSTR lpPathName)
 BOOL CnFTDFileManager::change_directory(LPCTSTR lpDirName)
 {
 	CString path = convert_special_folder_to_real_path(lpDirName);
+	logWrite(_T("to real path : \"%s\" to \"%s\""), lpDirName, path);
 
 	if (_tchdir(path) == 0)
 	{

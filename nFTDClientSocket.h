@@ -61,6 +61,5 @@ protected:
 	USHORT m_port;
 	int m_iServerNum;
 	BOOL m_bIsN2NConnectionTiming;
-
 };
 

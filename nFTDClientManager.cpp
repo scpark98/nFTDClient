@@ -248,7 +248,7 @@ void CnFTDClientManager::run()
 	}
 
 	logWrite(_T("End"));
-	TerminateThread(m_hThread, 0);
+	//TerminateThread(m_hThread, 0);
 }
 
 void CnFTDClientManager::thread_data_socket()

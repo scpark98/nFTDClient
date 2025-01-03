@@ -465,6 +465,8 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	ulSize.LowPart = recv_file.nFileSizeLow;
 
 	CString sPath = convert_special_folder_to_real_path(recv_file.cFileName);
+	logWrite(_T("to real path : \"%s\" to \"%s\""), recv_file.cFileName, sPath);
+
 
 	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -629,6 +631,8 @@ BOOL CnFTDClientSocket::create_directory(LPCTSTR lpPathName)
 	}
 
 	CString sPath = convert_special_folder_to_real_path(path);
+	logWrite(_T("to real path : \"%s\" to \"%s\""), path, sPath);
+
 
 	if (make_full_directory(sPath))
 	{
@@ -881,7 +885,7 @@ BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 	}
 
 	CString path = convert_special_folder_to_real_path((LPCTSTR)DirName);
-	logWrite(_T("%s to %s"), (LPCTSTR)DirName, path);
+	logWrite(_T("to real path : \"%s\" to \"%s\""), (LPCTSTR)DirName, path);
 
 	//"내 PC"인 경우는 무조건 true, 그렇지 않으면 _tchdir()의 결과 리턴.
 	if ((path == ::get_system_label(CSIDL_DRIVES)) || (_tchdir(path) == 0))
@@ -897,6 +901,7 @@ BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 
 	if (ret.type == nFTD_OK)
 	{
+		logWrite(_T("change_directory() OK"));
 		return TRUE;
 	}
 
@@ -1556,7 +1561,8 @@ bool CnFTDClientSocket::filelist_all()
 	else
 	{
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
-		sPath = convert_special_folder_to_real_path(sPath);
+		sPath = convert_special_folder_to_real_path((LPTSTR)path);
+		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)path, sPath);
 
 		find_all_files(sPath, &dq, _T("*"), true, recursive);
 
@@ -1642,7 +1648,9 @@ bool CnFTDClientSocket::folderlist_all()
 	else
 	{
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
-		sPath = convert_special_folder_to_real_path(sPath);
+		sPath = convert_special_folder_to_real_path((LPTSTR)path);
+		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)path, sPath);
+
 
 		if (!PathFileExists(sPath) || !PathIsDirectory(sPath))
 		{
@@ -1746,7 +1754,10 @@ bool CnFTDClientSocket::file_command()
 				return false;
 			}
 
-			dq.push_back(convert_special_folder_to_real_path(fullpath));
+			CString sfullpath = convert_special_folder_to_real_path(fullpath);
+			logWrite(_T("to real path : \"%s\" to \"%s\""), fullpath, sfullpath);
+
+			dq.push_back(sfullpath);
 		}
 	}
 	else
@@ -1766,6 +1777,7 @@ bool CnFTDClientSocket::file_command()
 		}
 
 		sParam0 = convert_special_folder_to_real_path((LPTSTR)param0);
+		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param0, sParam0);
 
 		if (cmd == file_cmd_rename)
 		{
@@ -1785,10 +1797,14 @@ bool CnFTDClientSocket::file_command()
 
 			sParam1 = (LPTSTR)param1;
 			sParam1 = convert_special_folder_to_real_path((LPTSTR)param1);
+			logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param1, sParam1);
 		}
 	}
 
-	logWrite(_T("cmd = %d, sParam0 = %s, sParam1 = %s\n"), cmd, sParam0, sParam1);
+	if (cmd == file_cmd_property)
+		logWrite(_T("file_command success. cmd = %d, dq size = %d, dq[0] = %s"), cmd, dq.size(), dq[0]);
+	else
+		logWrite(_T("cmd = %d, sParam0 = %s, sParam1 = %s\n"), cmd, sParam0, sParam1);
 
 	bool res = false;
 	if (cmd == file_cmd_open)
@@ -1825,7 +1841,6 @@ bool CnFTDClientSocket::file_command()
 		//thread에서 호출해서인지 여기서 직접 show_property_window()를 부르면 실패한다. main에서 호출해야 한다.
 		//res = show_property(std::deque<CString> { sParam0 });
 		//res = show_property(std::deque<CString> { _T("C:\\") });
-		logWrite(_T("show file property window : %s and total %d files."), dq[0], dq.size());
 		res = true;
 		::SendMessage(((CnFTDClientDlg*)AfxGetApp()->GetMainWnd())->m_hWnd, Message_CnFTDClientSocket, (WPARAM)&dq, 0);
 	}

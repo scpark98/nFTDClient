@@ -72,6 +72,9 @@
     <ClInclude Include="..\..\Common\system\ShellImageList\ShellImageList.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\system\CrashHandler\CrashHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="nFTDClient.cpp">
@@ -117,6 +120,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\system\ShellImageList\ShellImageList.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\system\CrashHandler\CrashHandler.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
