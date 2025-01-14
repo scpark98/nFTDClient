@@ -151,7 +151,7 @@ BOOL CnFTDClientSocket::Connection()
 		}
 	else
 	{
-		logWrite(_T("not CONNECTION_CONNECT case..."));
+		logWrite(_T("Listening..."));
 
 		blastsock sock;
 		if (!sock.Create())
@@ -159,31 +159,31 @@ BOOL CnFTDClientSocket::Connection()
 			logWriteE(_T("Socket Create Fail"));
 			return FALSE;
 		}
-		logWrite(_T("sock.Create()"));
+		logWrite(_T("sock.Create() success."));
 
 		int optval = 1;
 		sock.SetSockOpt(SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval));
 
 		if (!sock.Bind(m_port))
 		{
-			logWriteE(_T("Socket Bind Fail"));
+			logWriteE(_T("Socket Bind Fail. m_port = %d, error = %d."), m_port, GetLastError());
 			return FALSE;
 		}
-		logWrite(_T("sock.Bind(%d)"), m_port);
+		logWrite(_T("sock.Bind(%d) success."), m_port);
 
 		if (!sock.Listen())
 		{
 			logWriteE(_T("Socket Listen Fail"));
 			return FALSE;
 		}
-		logWrite(_T("sock.Listen()"));
+		logWrite(_T("sock.Listen() success."));
 
 		if (!sock.Accept(*this))
 		{
 			logWriteE(_T("Socket Accept Fail"));
 			return FALSE;
 		}
-		logWrite(_T("sock.Accept()"));
+		logWrite(_T("sock.Accept() success."));
 
 		sock.CloseSocket();
 #ifdef _NO_CRYPT
@@ -666,8 +666,9 @@ BOOL CnFTDClientSocket::create_directory(LPCTSTR lpPathName)
 	else
 	{
 		logWriteE(_T("Receive Not OK"));
-		return FALSE;
 	}
+
+	return FALSE;
 }
 
 BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
@@ -700,7 +701,8 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 		return FALSE;
 	}
 
-	if (m_FileManager.Rename(OldPathName, NewPathName))
+	//if (m_FileManager.Rename(OldPathName, NewPathName))
+	if (MoveFile(OldPathName, NewPathName))
 	{
 		ret.type = nFTD_OK;
 	}
@@ -847,7 +849,8 @@ BOOL CnFTDClientSocket::DriveList(PUINT pDriveType, LPSTR lpDriveName)
 			return FALSE;
 		}
 
-		ZeroMemory(DriveName, MAX_PATH);
+		logWrite(_T("drive. %s"), DriveName);
+
 		ZeroMemory(DriveName, MAX_PATH);
 	} while (m_FileManager.NextDriveList(&msgFindDriveData.driveType, DriveName));
 
@@ -909,8 +912,14 @@ BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 	return FALSE;
 }
 
-BOOL CnFTDClientSocket::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes)
+BOOL CnFTDClientSocket::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes, TCHAR drive)
 {
+	if (!RecvExact((LPSTR)&drive, sizeof(TCHAR), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return FALSE;
+	}
+
 	msgDiskSpace msgTotalNumberOfFreeBytes;
 #ifdef MOBILE_FILETRANSFER
 	ULARGE_INTEGER tempSize;
@@ -920,8 +929,9 @@ BOOL CnFTDClientSocket::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes)
 		msgTotalNumberOfFreeBytes.type = nFTD_ERROR;
 
 	msgTotalNumberOfFreeBytes.space = tempSize.QuadPart;
-#else	
-	if (m_FileManager.TotalSpace(&(msgTotalNumberOfFreeBytes.space)))
+#else
+	msgTotalNumberOfFreeBytes.space.QuadPart = get_disk_total_size(CString(drive));
+	if (true)// m_FileManager.TotalSpace(&(msgTotalNumberOfFreeBytes.space)))
 		msgTotalNumberOfFreeBytes.type = nFTD_OK;
 	else
 		msgTotalNumberOfFreeBytes.type = nFTD_ERROR;
@@ -929,7 +939,7 @@ BOOL CnFTDClientSocket::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes)
 
 	if (!SendExact((LPSTR)&msgTotalNumberOfFreeBytes, sz_msgDiskSpace, BLASTSOCK_BUFFER))
 	{
-		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
 		return FALSE;
 	}
 	if (msgTotalNumberOfFreeBytes.type == nFTD_OK)
@@ -943,8 +953,14 @@ BOOL CnFTDClientSocket::TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes)
 	}
 }
 
-BOOL CnFTDClientSocket::RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes)
+BOOL CnFTDClientSocket::RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes, TCHAR drive)
 {
+	if (!RecvExact((LPSTR)&drive, sizeof(TCHAR), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return FALSE;
+	}
+
 	msgDiskSpace msgTotalNumberOfRemainBytes;
 #ifdef MOBILE_FILETRANSFER
 	ULARGE_INTEGER tempSize;
@@ -954,7 +970,8 @@ BOOL CnFTDClientSocket::RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes)
 		msgTotalNumberOfRemainBytes.type = nFTD_ERROR;
 	msgTotalNumberOfRemainBytes.space = tempSize.QuadPart;
 #else
-	if (m_FileManager.RemainSpace(&(msgTotalNumberOfRemainBytes.space)))
+	msgTotalNumberOfRemainBytes.space.QuadPart = get_disk_free_size(CString(drive));
+	if (true)//m_FileManager.RemainSpace(&(msgTotalNumberOfRemainBytes.space)))
 		msgTotalNumberOfRemainBytes.type = nFTD_OK;
 	else
 		msgTotalNumberOfRemainBytes.type = nFTD_ERROR;
@@ -1028,6 +1045,8 @@ BOOL CnFTDClientSocket::get_system_label()
 
 	for (; it != map->end(); it++)
 	{
+		logWrite(_T("system label. %d = %s"), it->first, it->second);
+
 		//csidl을 보내고
 		if (!SendExact((LPSTR) & (it->first), sizeof(int), BLASTSOCK_BUFFER))
 		{
@@ -1068,6 +1087,8 @@ BOOL CnFTDClientSocket::get_system_path()
 
 	for (; it != map->end(); it++)
 	{
+		logWrite(_T("system path. %d = %s"), it->first, it->second);
+
 		//csidl을 보내고
 		if (!SendExact((LPSTR) & (it->first), sizeof(int), BLASTSOCK_BUFFER))
 		{
@@ -1100,6 +1121,34 @@ BOOL CnFTDClientSocket::get_system_path()
 
 	return TRUE;
 }
+
+bool CnFTDClientSocket::get_drive_list()
+{
+	std::deque<CDiskDriveInfo> drive_list;
+	::get_drive_list(&drive_list);
+
+	for (auto drive : drive_list)
+	{
+		logWrite(_T("drive %s. %s"), drive.label, drive.path);
+
+		if (!SendExact((LPSTR)&drive, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))
+		{
+			logWriteE(_T("CODE-1 : %d"), GetLastError());
+			return false;
+		}
+	}
+	
+	CDiskDriveInfo drive_info;
+	drive_info.type == DRIVE_UNKNOWN;
+	if (!SendExact((LPSTR)&drive_info, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d"), GetLastError());
+		return false;
+	}
+
+	return true;
+}
+
 /*
 BOOL CnFTDClientSocket::GetDesktopPath()
 {
@@ -1548,13 +1597,16 @@ bool CnFTDClientSocket::filelist_all()
 	//내 PC 를 선택한 경우는 별도 처리
 	if (sPath == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))
 	{
-		//0:내 PC의 label, 1:바탕화면 경로, 2:문서 경로, 3:C드라이브 volume, 4:D드라이브 volume...
 		for (i = 0; i < theApp.m_shell_imagelist.m_volume[0].get_drive_list()->size(); i++)
 		{
 			WIN32_FIND_DATA data;
 			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
-			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_drive_list()->at(i));
+			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_drive_list()->at(i).label);
+
+			//CString drive = convert_special_folder_to_real_path(data.cFileName);
+			//ULARGE_INTEGER filesize = get_dis
+			//filesize
 			dq.push_back(data);
 		}
 	}
@@ -1627,7 +1679,7 @@ bool CnFTDClientSocket::folderlist_all()
 
 	CString sPath = path;
 	std::deque<WIN32_FIND_DATA> dq;
-	std::deque<CString> *drive_list = theApp.m_shell_imagelist.m_volume[0].get_drive_list();
+	std::deque<CDiskDriveInfo> *drive_list = theApp.m_shell_imagelist.m_volume[0].get_drive_list();
 	WIN32_FIND_DATA data;
 	length = sizeof(WIN32_FIND_DATA);
 
@@ -1710,6 +1762,48 @@ bool CnFTDClientSocket::folderlist_all()
 	}
 
 	return true;
+}
+
+bool CnFTDClientSocket::new_folder_index()
+{
+	USHORT length;
+	TCHAR path[MAX_PATH] = { 0, };
+	TCHAR new_folder_title[MAX_PATH] = { 0, };
+
+	//path 길이 수신
+	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	//path 수신
+	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	//new_folder_title 길이 수신
+	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	//new_folder_title 수신
+	if (!RecvExact((LPSTR)new_folder_title, length, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	int index = get_file_index(path, new_folder_title);
+	if (!SendExact((LPSTR)&index, sizeof(int), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-3 : %d"), GetLastError());
+		return false;
+	}
 }
 
 bool CnFTDClientSocket::file_command()
@@ -1831,10 +1925,6 @@ bool CnFTDClientSocket::file_command()
 	else if (cmd == file_cmd_delete)
 	{
 		res = delete_file(sParam0, true);
-	}
-	else if (cmd == file_cmd_new_folder)
-	{
-		res = make_full_directory(sParam0);
 	}
 	else if (cmd == file_cmd_property)
 	{

@@ -34,8 +34,10 @@ BOOL CnFTDFileManager::create_directory(LPCTSTR lpPathName)
 
 BOOL CnFTDFileManager::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 {
-	if(_trename(lpOldName, lpNewName) == 0) return TRUE;
-	else return FALSE;
+	if (_trename(lpOldName, lpNewName) == 0)
+		return TRUE;
+
+	return FALSE;
 }
 
 BOOL CnFTDFileManager::delete_directory(LPCTSTR lpPath)

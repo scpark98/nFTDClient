@@ -75,6 +75,8 @@ BEGIN_MESSAGE_MAP(CnFTDClientDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_WINDOWPOSCHANGED()
 	ON_REGISTERED_MESSAGE(Message_CnFTDClientSocket, CnFTDClientDlg::on_message_from_CnFTDClientSocket)
+	ON_BN_CLICKED(IDOK, &CnFTDClientDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CnFTDClientDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -110,7 +112,7 @@ BOOL CnFTDClientDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	RestoreWindowPosition(&theApp, this);
+	//RestoreWindowPosition(&theApp, this);
 
 	std::thread t(&CnFTDClientDlg::thread_connect, this);
 	t.detach();
@@ -273,4 +275,15 @@ int CnFTDClientDlg::connect()
 	logWrite(_T("Connection completed."));
 
 	return 1;
+}
+
+void CnFTDClientDlg::OnBnClickedOk()
+{
+}
+
+
+void CnFTDClientDlg::OnBnClickedCancel()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CDialogEx::OnCancel();
 }

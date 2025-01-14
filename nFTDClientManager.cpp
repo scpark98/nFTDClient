@@ -145,6 +145,10 @@ void CnFTDClientManager::run()
 			m_socket.file_command();
 			logWrite(_T("nFTD_file_command"));
 			break;
+		case nFTD_new_folder_index:
+			m_socket.new_folder_index();
+			logWrite(_T("nFTD_file_command"));
+			break;
 		case nFTD_Rename:
 			m_socket.Rename(NULL, NULL);
 			logWrite(_T("nFTD_Rename"));
@@ -197,7 +201,11 @@ void CnFTDClientManager::run()
 			m_socket.get_system_path();
 			logWrite(_T("nFTD_get_system_path"));
 			break;
-		//case nFTD_DesktopPath:
+		case nFTD_get_drive_list:
+			m_socket.get_drive_list();
+			logWrite(_T("nFTD_get_drive_list"));
+			break;
+			//case nFTD_DesktopPath:
 		//	m_socket.GetDesktopPath();
 		//	logWrite(_T("nFTD_DesktopPath"));
 		//	break;

@@ -23,12 +23,17 @@ public:
 	//열기(open), 이름변경(rename), 삭제(delete), 속성보기(property) 등의 파일명령은 파라미터만 다를 뿐이므로 하나의 함수로 통일한다.
 	bool file_command();
 
+	bool	new_folder_index();
+
 	BOOL Rename(LPCTSTR lpOldName, LPCTSTR lpNewName);
 	BOOL delete_directory(LPCTSTR lpPath);
 	BOOL DeleteFile(LPCTSTR lpPathName);
 	BOOL change_directory(LPCTSTR lpDirName);
-	BOOL TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes);
-	BOOL RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes);
+
+	//drive = 0이면 GetCurrentDirectory()의 디스크 용량
+	BOOL TotalSpace(PULARGE_INTEGER lpTotalNumberOfFreeBytes, TCHAR drive = 0);
+	//drive = 0이면 GetCurrentDirectory()의 디스크 용량
+	BOOL RemainSpace(PULARGE_INTEGER lpTotalNumberOfRemainBytes, TCHAR drive = 0);
 	BOOL CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath);
 
 	BOOL FileList(WIN32_FIND_DATA* pFileInfo);
@@ -49,6 +54,7 @@ public:
 
 	BOOL get_system_label();
 	BOOL get_system_path();
+	bool get_drive_list();
 
 	BOOL ExecuteFile();
 	BOOL FileInfo(WIN32_FIND_DATA* pFileInfo);
