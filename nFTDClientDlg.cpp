@@ -77,6 +77,7 @@ BEGIN_MESSAGE_MAP(CnFTDClientDlg, CDialogEx)
 	ON_REGISTERED_MESSAGE(Message_CnFTDClientSocket, CnFTDClientDlg::on_message_from_CnFTDClientSocket)
 	ON_BN_CLICKED(IDOK, &CnFTDClientDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &CnFTDClientDlg::OnBnClickedCancel)
+	ON_WM_WINDOWPOSCHANGING()
 END_MESSAGE_MAP()
 
 
@@ -205,6 +206,11 @@ int CnFTDClientDlg::connect()
 
 	CString cmd = GetCommandLine();
 	logWrite(_T("cmd = %s"), cmd);
+
+	for (int i = 0; i < __argc; i++)
+	{
+		logWrite(_T("param[%d] = %s"), i, __targv[i]);
+	}
 	/*
 	LPSTR _lpCmdLine = new CHAR[strlen(lpCmdLine) + 1];
 	ZeroMemory(_lpCmdLine, strlen(lpCmdLine) + 1);
@@ -286,4 +292,13 @@ void CnFTDClientDlg::OnBnClickedCancel()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CDialogEx::OnCancel();
+}
+
+
+void CnFTDClientDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
+{
+	CDialogEx::OnWindowPosChanging(lpwndpos);
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	//lpwndpos->flags &= ~SWP_SHOWWINDOW;
 }

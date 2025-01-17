@@ -8,6 +8,7 @@
 #include "nFTDClientDlg.h"
 
 #include "SocketsInitializer.h"
+#include "../../Common/Functions.h"
 
 HMODULE g_hRes;
 RSAKey g_rsakey;
@@ -74,8 +75,8 @@ BOOL CnFTDClientApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Koino"));
 
-	//gLog.set(_T("..\\bin\\Log"));
-	logWrite(_T("\n==================== Program Start ===================="));
+	gLog.set(get_known_folder(CSIDL_COMMON_DOCUMENTS) + _T("\\LinkMeMineSE\\Log\\FileTransfer"), get_exe_file_title());
+	gLog.write_start_log();
 
 	// 소켓초기화
 	SocketsInitializer socketsInitializer;
@@ -121,7 +122,7 @@ BOOL CnFTDClientApp::InitInstance()
 int CnFTDClientApp::ExitInstance()
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-	logWrite(_T("==================== Program Exit ====================\n"));
+	//gLog.write_end_log();
 
 	return CWinApp::ExitInstance();
 }

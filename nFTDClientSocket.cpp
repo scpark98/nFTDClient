@@ -1040,6 +1040,8 @@ BOOL CnFTDClientSocket::CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath)
 
 BOOL CnFTDClientSocket::get_system_label()
 {
+	logWrite(_T(""));
+
 	std::map<int, CString>* map = theApp.m_shell_imagelist.m_volume[0].get_label_map();
 	std::map<int, CString>::iterator it = map->begin();
 
@@ -1124,12 +1126,12 @@ BOOL CnFTDClientSocket::get_system_path()
 
 bool CnFTDClientSocket::get_drive_list()
 {
-	std::deque<CDiskDriveInfo> drive_list;
-	::get_drive_list(&drive_list);
+	std::deque<CDiskDriveInfo> *drive_list = theApp.m_shell_imagelist.m_volume[0].get_drive_list();
+	//::get_drive_list(&drive_list);
 
-	for (auto drive : drive_list)
+	for (auto drive : *drive_list)
 	{
-		logWrite(_T("drive %s. %s"), drive.label, drive.path);
+		logWrite(_T("drive info. type = %d, label = %s, path = %s"), drive.type, drive.label, drive.path);
 
 		if (!SendExact((LPSTR)&drive, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))
 		{
@@ -1691,7 +1693,7 @@ bool CnFTDClientSocket::folderlist_all()
 		{
 			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
-			_stprintf(data.cFileName, _T("%s"), drive_list->at(i));
+			_stprintf(data.cFileName, _T("%s"), drive_list->at(i).label);
 			dq.push_back(data);
 		}
 
@@ -1804,6 +1806,8 @@ bool CnFTDClientSocket::new_folder_index()
 		logWriteE(_T("CODE-3 : %d"), GetLastError());
 		return false;
 	}
+
+	return true;
 }
 
 bool CnFTDClientSocket::file_command()
@@ -1912,7 +1916,13 @@ bool CnFTDClientSocket::file_command()
 	else if (cmd == file_cmd_open_explorer)
 	{
 		res = true;
-		ShellExecute(NULL, _T("explore"), sParam0, 0, 0, SW_SHOWNORMAL);
+
+		//내 PC가 선택된 경우 param0도 "내 PC"라는 값을 가지는데 그대로 열면 "문서" 폴더가 열린다.
+		//empty로 만들어줘고 열어야 실제 "내 PC"가 탐색기로 열린다.
+		if (sParam0 == theApp.m_shell_imagelist.m_volume[0].get_label(CSIDL_DRIVES))
+			sParam0 = _T("");
+
+		ShellExecute(NULL, _T("open"), _T("explorer"), sParam0, 0, SW_SHOWNORMAL);
 	}
 	else if (cmd == file_cmd_new_folder)
 	{
@@ -1933,6 +1943,10 @@ bool CnFTDClientSocket::file_command()
 		//res = show_property(std::deque<CString> { _T("C:\\") });
 		res = true;
 		::SendMessage(((CnFTDClientDlg*)AfxGetApp()->GetMainWnd())->m_hWnd, Message_CnFTDClientSocket, (WPARAM)&dq, 0);
+	}
+	else if (cmd == file_cmd_check_exist)
+	{
+		res = PathFileExists(sParam0);
 	}
 
 	//명령 처리 결과 리턴

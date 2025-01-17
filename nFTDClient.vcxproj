@@ -134,50 +134,58 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../bin/</OutDir>
+    <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -202,13 +210,16 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -236,13 +247,16 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -267,13 +281,16 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -298,6 +315,9 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -306,7 +326,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -333,6 +353,9 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">
     <ClCompile>
@@ -341,7 +364,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -371,6 +394,9 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -379,7 +405,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -406,6 +432,9 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|x64'">
     <ClCompile>
@@ -414,7 +443,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
@@ -441,6 +470,9 @@
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files (x86)\LinkMeMineSE\Agent\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\CButton\SCSystemButtons\SCSystemButtons.h" />
