@@ -78,6 +78,8 @@ BOOL CnFTDClientApp::InitInstance()
 	gLog.set(get_known_folder(CSIDL_COMMON_DOCUMENTS) + _T("\\LinkMeMineSE\\Log\\FileTransfer"), get_exe_file_title());
 	gLog.write_start_log();
 
+	logWrite(_T("cmdline = %s"), GetCommandLine());
+
 	// 소켓초기화
 	SocketsInitializer socketsInitializer;
 

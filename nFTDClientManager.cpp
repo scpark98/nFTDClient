@@ -97,7 +97,7 @@ BOOL CnFTDClientManager::Connection()
 
 void CnFTDClientManager::run()
 {
-	logWrite(_T(""));
+	logWrite(_T(" "));
 
 	msg ret;
 	DWORD dw;
@@ -133,77 +133,77 @@ void CnFTDClientManager::run()
 			break;
 		}
 
-		TRACE(_T("ret.type = %d\n"), ret.type);
+		logWrite(_T("ret.type = %d\n"), ret.type);
 
 		switch (ret.type)
 		{
 		case nFTD_CreateDirectory:
-			m_socket.create_directory(NULL);
 			logWrite(_T("nFTD_CreateDirectory"));
+			m_socket.create_directory(NULL);
 			break;
 		case nFTD_file_command :
-			m_socket.file_command();
 			logWrite(_T("nFTD_file_command"));
+			m_socket.file_command();
 			break;
 		case nFTD_new_folder_index:
-			m_socket.new_folder_index();
 			logWrite(_T("nFTD_file_command"));
+			m_socket.new_folder_index();
 			break;
 		case nFTD_Rename:
-			m_socket.Rename(NULL, NULL);
 			logWrite(_T("nFTD_Rename"));
+			m_socket.Rename(NULL, NULL);
 			break;
 		case nFTD_DeleteDirectory:
-			m_socket.delete_directory(NULL);
 			logWrite(_T("nFTD_DeleteDirectory"));
+			m_socket.delete_directory(NULL);
 			break;
 		case nFTD_DeleteFile:
-			m_socket.DeleteFile(NULL);
 			logWrite(_T("nFTD_DeleteFile"));
+			m_socket.DeleteFile(NULL);
 			break;
 		case nFTD_ChangeDirectory:
-			m_socket.change_directory(NULL);
 			logWrite(_T("nFTD_ChangeDirectory"));
+			m_socket.change_directory(NULL);
 			break;
 		case nFTD_TotalSpace:
-			m_socket.TotalSpace(NULL);
 			logWrite(_T("nFTD_TotalSpace"));
+			m_socket.TotalSpace(NULL);
 			break;
 		case nFTD_RemainSpace:
-			m_socket.RemainSpace(NULL);
 			logWrite(_T("nFTD_RemainSpace"));
+			m_socket.RemainSpace(NULL);
 			break;
 		case nFTD_CurrentPath:
-			m_socket.CurrentPath(0, NULL);
 			logWrite(_T("nFTD_CurrentPath"));
+			m_socket.CurrentPath(0, NULL);
 			break;
 		case nFTD_FileSize:
-			m_socket.FileSize(NULL, NULL);
 			logWrite(_T("nFTD_FileSize"));
+			m_socket.FileSize(NULL, NULL);
 			break;
 		case nFTD_FileList:
-			m_socket.FileList(NULL);
 			logWrite(_T("nFTD_FileList"));
+			m_socket.FileList(NULL);
 			break;
 		case nFTD_FileList2:
-			m_socket.FileList2(NULL);
 			logWrite(_T("nFTD_FileList2"));
+			m_socket.FileList2(NULL);
 			break;
 		case nFTD_DriveList:
-			m_socket.DriveList(NULL, NULL);
 			logWrite(_T("nFTD_DriveList"));
+			m_socket.DriveList(NULL, NULL);
 			break;
 		case nFTD_get_system_label:
-			m_socket.get_system_label();
 			logWrite(_T("nFTD_get_system_label"));
+			m_socket.get_system_label();
 			break;
 		case nFTD_get_system_path:
-			m_socket.get_system_path();
 			logWrite(_T("nFTD_get_system_path"));
+			m_socket.get_system_path();
 			break;
 		case nFTD_get_drive_list:
-			m_socket.get_drive_list();
 			logWrite(_T("nFTD_get_drive_list"));
+			m_socket.get_drive_list();
 			break;
 			//case nFTD_DesktopPath:
 		//	m_socket.GetDesktopPath();
@@ -214,18 +214,19 @@ void CnFTDClientManager::run()
 		//	logWrite(_T("nFTD_DocumentPath"));
 		//	break;
 		case nFTD_ExecuteFile:
-			m_socket.ExecuteFile();
 			logWrite(_T("nFTD_ExecuteFile"));
+			m_socket.ExecuteFile();
 			break;
 		case nFTD_FileInfo:
-			//m_socket.FileInfo(NULL);
 			logWrite(_T("nFTD_FileInfo"));
+			//m_socket.FileInfo(NULL);
 			break;
 		case nFTD_FileList3:
-			//m_socket.FileList3(NULL);
 			logWrite(_T("nFTD_FileList3"));
+			//m_socket.FileList3(NULL);
 			break;
 		case nFTD_OpenDataConnection:
+			logWrite(_T("nFTD_OpenDataConnection"));
 			if (m_DataSocket.Connection())
 			{
 				//m_hThread = CreateThread(NULL, 0, ThreadProcedure, (LPVOID)this, 0, &dw);
@@ -240,6 +241,10 @@ void CnFTDClientManager::run()
 		case nFTD_folderlist_all:
 			logWrite(_T("nFTD_folderlist_all"));
 			m_socket.folderlist_all();
+			break;
+		case nFTD_get_subfolder_count:
+			logWrite(_T("nFTD_get_subfolder_count"));
+			m_socket.get_subfolder_count();
 			break;
 		}
 	}

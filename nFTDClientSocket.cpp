@@ -6,6 +6,7 @@
 #include "../../Common/Functions.h"
 
 #include <mstcpip.h>
+#include <experimental/filesystem>
 
 extern HMODULE g_hRes;
 extern RSAKey g_rsakey;
@@ -1040,7 +1041,7 @@ BOOL CnFTDClientSocket::CurrentPath(DWORD nBufferLength, LPTSTR lpCurrentPath)
 
 BOOL CnFTDClientSocket::get_system_label()
 {
-	logWrite(_T(""));
+	logWrite(_T(" "));
 
 	std::map<int, CString>* map = theApp.m_shell_imagelist.m_volume[0].get_label_map();
 	std::map<int, CString>::iterator it = map->begin();
@@ -1522,7 +1523,10 @@ BOOL CnFTDClientSocket::FileSize(LPTSTR lpPathName, ULARGE_INTEGER* ulSize)
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
-	LPTSTR PathName = new TCHAR[length + 1]; ZeroMemory(PathName, (length + 1) * sizeof(TCHAR));
+
+	LPTSTR PathName = new TCHAR[length + 1];
+	ZeroMemory(PathName, (length + 1) * sizeof(TCHAR));
+
 	if (!RecvExact((LPSTR)PathName, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1567,7 +1571,7 @@ BOOL CnFTDClientSocket::FileSize(LPTSTR lpPathName, ULARGE_INTEGER* ulSize)
 bool CnFTDClientSocket::filelist_all()
 {
 	int i;
-	msg ret;
+	//msg ret;
 	bool recursive = false;
 	USHORT length;
 	LPTSTR path[MAX_PATH] = { 0, };
@@ -1577,7 +1581,7 @@ bool CnFTDClientSocket::filelist_all()
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return false;
-	}
+	}                                                                                                                                    
 
 	//path 수신
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
@@ -1605,7 +1609,7 @@ bool CnFTDClientSocket::filelist_all()
 			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
 			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_drive_list()->at(i).label);
-
+			logWriteE(_T("%s"), data.cFileName);
 			//CString drive = convert_special_folder_to_real_path(data.cFileName);
 			//ULARGE_INTEGER filesize = get_dis
 			//filesize
@@ -1705,7 +1709,6 @@ bool CnFTDClientSocket::folderlist_all()
 		sPath = convert_special_folder_to_real_path((LPTSTR)path);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)path, sPath);
 
-
 		if (!PathFileExists(sPath) || !PathIsDirectory(sPath))
 		{
 			//존재하지 않을 경우
@@ -1720,12 +1723,36 @@ bool CnFTDClientSocket::folderlist_all()
 			//디렉토리만 남긴다. (dot, 숨김파일, 단순파일은 삭제)
 			for (i = dq.size() - 1; i >= 0; i--)
 			{
+				//순수 디렉토리가 아니면 리스트에서 제거하고
 				if (dq[i].dwFileAttributes & FILE_ATTRIBUTE_HIDDEN ||
 					!(dq[i].dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ||
 					_tcscmp(dq[i].cFileName, _T(".")) == 0 ||
 					_tcscmp(dq[i].cFileName, _T("..")) == 0)
 				{
 					dq.erase(dq.begin() + i);
+				}
+				//디렉토리인 경우는 subfolder count까지 줘야 트리에서 확장버튼 표시유무를 결정하므로
+				//nFileSizeLow에 그 값을 넣어서 넘겨준다.
+				//subfolder의 count를 구하느냐 FindFirstFile()을 이용해서 폴더이면 break하느냐는 경우에 따라 장단점이 있다.
+				//c:\windows 등과 같은 폴더는 FindFirstFile()이 빠를 것이고 사용자가 만든 폴더에 서브폴더가 없이 파일들만 많다면 std::count_if가 빠를 것이다.
+				else
+				{
+					long t0 = clock();
+					int subfolder_count = has_sub_folders(dq[i].cFileName);
+					TRACE(_T("elapsed for %s = %ld\n"), dq[i].cFileName, clock() - t0);
+					dq[i].nFileSizeLow = subfolder_count;
+					/*
+					int subfolder_count = 0;
+
+					//namespace fs = std::experimental::filesystem;
+					//for (auto& p : fs::directory_iterator(dq[i].cFileName))
+					//	subfolder_count++;
+					using std::experimental::filesystem::directory_iterator;
+					using fp = bool(*)(const std::experimental::filesystem::path&);
+					subfolder_count = std::count_if(directory_iterator(dq[i].cFileName), directory_iterator{}, (fp)std::experimental::filesystem::is_directory);
+					TRACE(_T("elapsed for %s = %ld\n"), dq[i].cFileName, clock() - t0);
+					dq[i].nFileSizeLow = subfolder_count;
+					*/
 				}
 			}
 		}
@@ -1760,6 +1787,62 @@ bool CnFTDClientSocket::folderlist_all()
 	if (!SendExact((LPSTR)&temp, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d"), GetLastError());
+		return false;
+	}
+
+	return true;
+}
+
+bool CnFTDClientSocket::get_subfolder_count()
+{
+	USHORT length;
+	LPTSTR path = new TCHAR[MAX_PATH];
+	ZeroMemory(path, MAX_PATH * sizeof(TCHAR));
+
+	//path 길이 수신
+	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return false;
+	}
+
+	//path 수신
+	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d "), GetLastError());
+		return false;
+	}
+
+	std::deque<WIN32_FIND_DATA> dq;
+
+	CString sPath = convert_special_folder_to_real_path(path);
+	int subfolder_count = 0;
+
+	long t0 = clock();
+	if (true)
+	{
+		namespace fs = std::experimental::filesystem;
+		for (auto& p : fs::directory_iterator(sPath.GetBuffer()))
+			subfolder_count++;
+	}
+	else
+	{
+		//find_all_files()를 쓰면 간단하지만 속도가 너무 느림
+		find_all_files(sPath, &dq, _T("*"), true);
+
+		for (auto item : dq)
+		{
+			if (!(item.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) &&
+				(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				subfolder_count++;
+		}
+	}
+	TRACE(_T("elapsed = %ld\n"), clock() - t0);
+
+	//subfolder count 전송
+	if (!SendExact((LPSTR)&subfolder_count, sizeof(int), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-3 : %d"), GetLastError());
 		return false;
 	}
 

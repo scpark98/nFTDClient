@@ -45,21 +45,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
@@ -67,7 +67,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
@@ -219,7 +219,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -230,7 +230,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibD.lib;cryptlib.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../blastsock/Debug;../blastsock/cryptopp561/Win32/Output/Debug;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../blastsock/Debug;../blastsock/cryptopp/Win32/Output/Debug;</AdditionalLibraryDirectories>
       <StackReserveSize>41943040</StackReserveSize>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
@@ -364,7 +364,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;LMM_SERVICE;LMMSE_SERVICE;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../blastsock;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -377,7 +377,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibR.lib;cryptlib.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../blastsock/Release;../blastsock/cryptopp561/Win32/Output/Release;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../blastsock/Release;../blastsock/cryptopp/Win32/Output/Release;</AdditionalLibraryDirectories>
       <StackReserveSize>41943040</StackReserveSize>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>

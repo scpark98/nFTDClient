@@ -45,6 +45,7 @@ public:
 
 	bool	filelist_all();
 	bool	folderlist_all();
+	bool	get_subfolder_count();
 
 	BOOL Connection();
 	BOOL SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, ULARGE_INTEGER& ulFileSize);
