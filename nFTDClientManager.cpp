@@ -146,7 +146,7 @@ void CnFTDClientManager::run()
 			m_socket.file_command();
 			break;
 		case nFTD_new_folder_index:
-			logWrite(_T("nFTD_file_command"));
+			logWrite(_T("nFTD_new_folder_index"));
 			m_socket.new_folder_index();
 			break;
 		case nFTD_Rename:
