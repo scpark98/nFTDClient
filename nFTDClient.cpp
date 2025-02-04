@@ -85,6 +85,7 @@ BOOL CnFTDClientApp::InitInstance()
 		logWrite(_T("Parameters must be at least three. current __argc = %d. exit."), __argc);
 		return FALSE;
 	}
+
 	// 소켓초기화
 	SocketsInitializer socketsInitializer;
 

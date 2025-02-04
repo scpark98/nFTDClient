@@ -1830,7 +1830,7 @@ bool CnFTDClientSocket::get_subfolder_count()
 		//find_all_files()를 쓰면 간단하지만 속도가 너무 느림
 		find_all_files(sPath, &dq, _T("*"), true);
 
-		for (auto item : dq)
+		for (auto const &item : dq)
 		{
 			if (!(item.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) &&
 				(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
