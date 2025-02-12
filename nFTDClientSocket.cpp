@@ -1142,7 +1142,7 @@ bool CnFTDClientSocket::get_drive_list()
 	}
 	
 	CDiskDriveInfo drive_info;
-	drive_info.type == DRIVE_UNKNOWN;
+	drive_info.type = DRIVE_UNKNOWN;
 	if (!SendExact((LPSTR)&drive_info, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d"), GetLastError());
