@@ -324,10 +324,19 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	LPSTR packet = new CHAR[BUFFER_SIZE];
 	DWORD dwStartTicks = GetTickCount();
 	ULONGLONG sendedSize = 0;
-	int nCompareSpeed = GetPrivateProfileInt(_T("FILE"), _T("SPEED"), 0, get_exe_directory() + _T("\\config.ini"));
+	int nCompareSpeed = GetPrivateProfileInt(_T("FILE"), _T("SPEED"), 1024000, get_exe_directory() + _T("\\config.ini"));
 
+	//AP2P 모드일 경우는 최대 속도를 1,240,000으로 제한한다.
+	//사용자가 config.ini에서 0으로 편집할수도 있으므로 이 역시 1,240,000으로 변경한다.
 	if (g_FT_mode != FT_MODE_AP2P)
+	{
 		nCompareSpeed = 0;
+	}
+	else if (nCompareSpeed == 0 || nCompareSpeed > 1024000)
+	{
+		nCompareSpeed = 1024000;
+		WritePrivateProfileString(_T("FILE"), _T("SPEED"), i2S(nCompareSpeed), get_exe_directory() + _T("\\config.ini"));
+	}
 
 	logWrite(_T("nCompareSpeed = %d"), nCompareSpeed);
 

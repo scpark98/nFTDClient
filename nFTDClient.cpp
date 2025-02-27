@@ -89,8 +89,6 @@ BOOL CnFTDClientApp::InitInstance()
 	// 소켓초기화
 	SocketsInitializer socketsInitializer;
 
-	m_shell_imagelist.Initialize();
-
 	CnFTDClientDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();

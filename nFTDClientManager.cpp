@@ -32,14 +32,16 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 
 	// address
 	//lpCmdOpt = strtok(lpCmdLine, " ");
-	if (_tcscmp(__targv[1], _T("-l")) == 0)
+	if (_tcscmp(__targv[1], _T("-l")) == 0)		// P2P server
 	{
+		g_FT_mode = FT_MODE_P2P_S;
 		dwConnectionMode = CONNECTION_LISTEN;
 		ushPort = _ttoi(__targv[2]);// (USHORT)atoi(strtok(NULL, " "));
 		logWrite(_T("dwConnectionMode = CONNECTION_LISTEN. port = %d"), ushPort);
 	}
 	else if (_tcscmp(__targv[1], _T("-c")) == 0) // P2P connect
 	{
+		g_FT_mode = FT_MODE_P2P_C;
 		dwConnectionMode = CONNECTION_CONNECT;
 		ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
@@ -47,6 +49,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 	}
 	else if (_tcscmp(__targv[1], _T("-p")) == 0) // AP2P (pat to pat) . NMS ¿¡ Á¢¼Ó
 	{
+		g_FT_mode = FT_MODE_AP2P;
 		dwConnectionMode = CONNECTION_CONNECT;
 		ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
