@@ -1141,7 +1141,9 @@ bool CnFTDClientSocket::get_drive_list()
 
 	for (auto drive : *drive_list)
 	{
-		logWrite(_T("drive info. type = %d, label = %s, path = %s"), drive.type, drive.label, drive.path);
+		logWrite(_T("type = %d, label = %s, path = %s, total_space = %s, free_space = %s"),
+				drive.type, drive.label, drive.path,
+				i2S(drive.total_space.QuadPart, true), i2S(drive.free_space.QuadPart, true));
 
 		if (!SendExact((LPSTR)&drive, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))
 		{
@@ -1618,7 +1620,7 @@ bool CnFTDClientSocket::filelist_all()
 			ZeroMemory(&data, sizeof(data));
 			data.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
 			_stprintf(data.cFileName, _T("%s"), theApp.m_shell_imagelist.m_volume[0].get_drive_list()->at(i).label);
-			logWriteE(_T("%s"), data.cFileName);
+			logWrite(_T("%s"), data.cFileName);
 			//CString drive = convert_special_folder_to_real_path(data.cFileName);
 			//ULARGE_INTEGER filesize = get_dis
 			//filesize
