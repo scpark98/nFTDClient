@@ -75,7 +75,12 @@ BOOL CnFTDClientApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Koino"));
 
+#if defined(LMMSE_SERVICE)
 	gLog.set(get_known_folder(CSIDL_COMMON_DOCUMENTS) + _T("\\LinkMeMineSE\\Log\\FileTransfer"), get_exe_file_title());
+#else
+	gLog.set(get_known_folder(CSIDL_COMMON_DOCUMENTS) + _T("\\LinkMeMine\\Log\\FileTransfer"), get_exe_file_title());
+#endif
+
 	gLog.write_start_log();
 
 	logWrite(_T("cmdline = %s"), GetCommandLine());

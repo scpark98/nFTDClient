@@ -282,6 +282,9 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		return FALSE;
 	}
 
+	if (ulFileSize.LowPart == 0)
+		return TRUE;
+
 	if (!RecvExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-7 : %d "), GetLastError());
@@ -297,15 +300,15 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	}
 	else if (ret.type == nFTD_FileContinue)
 	{
-		if (!RecvExact((LPSTR)&exist_file, sizeof(WIN32_FIND_DATA), BLASTSOCK_BUFFER))
+		if (!RecvExact((LPSTR)&ulExistFileSize, sizeof(ULARGE_INTEGER), BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-9 : %d "), GetLastError());
 			return FALSE;
 		}
 
-		SetFilePointer(hFile, exist_file.nFileSizeLow, (LONG*)&exist_file.nFileSizeHigh, FILE_BEGIN);
-		ulExistFileSize.QuadPart = exist_file.nFileSizeLow;
-		ulExistFileSize.HighPart = exist_file.nFileSizeHigh;
+		SetFilePointer(hFile, ulExistFileSize.LowPart, (LONG*)&ulExistFileSize.HighPart, FILE_BEGIN);
+		//ulExistFileSize.QuadPart = exist_file.nFileSizeLow;
+		//ulExistFileSize.HighPart = exist_file.nFileSizeHigh;
 		ulTemp.QuadPart += ulExistFileSize.QuadPart;
 	}
 
@@ -314,7 +317,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	//0byte 파일일 경우는 아래의 do~while을 들어가지 않아야 한다.
 	if (ulFileSize.QuadPart == 0)
 	{
-		logWriteE(_T("0 byte file. just return."));
+		logWrite(_T("0 byte file. just return."));
 		CloseHandle(hFile);
 		return TRUE;
 	}
@@ -339,6 +342,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	}
 
 	logWrite(_T("nCompareSpeed = %d"), nCompareSpeed);
+	logWrite(_T("SendFile(%s)..."), send_file.cFileName);
 
 	do
 	{
@@ -374,6 +378,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 #ifdef LMM_SERVICE
 		if (nCompareSpeed > 0)
 		{
+			/*
 			sendedSize += dwBytesRead;
 			DWORD dwEndTicks = GetTickCount();
 			DWORD t = dwEndTicks - dwStartTicks;
@@ -382,7 +387,40 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 				t = 1;
 			}
 
-			if (t > 1000)
+			//if (t > 1000)
+			//{
+			//	t = 1000;
+			//}
+
+			double real_speed = 1.0;
+			//if (t1 - t0 > 100)
+			{
+				real_speed = double(sendedSize - ulExistFileSize.QuadPart) / double(t) * 1000.0;
+
+				//보낸 크기가 제한 크기보다 큰 비율에서 전송에 걸린 시간을 빼면 그 값이 인위적인 딜레이 ms임. 그 값이 0보다 작다면 딜레이 없음.
+				if ((nCompareSpeed > 0) && (real_speed > nCompareSpeed))
+				{
+					TRACE(_T("delay = %d\n"), (int)(max((sendedSize - ulExistFileSize.QuadPart) * 1000.0 / (double)nCompareSpeed - t, 0)));
+					//std::this_thread::sleep_for(std::chrono::milliseconds((int)(max((sendedSize - ulExistFileSize.QuadPart) * 1000.0 / (double)nCompareSpeed - t, 0))));
+					Sleep(max((sendedSize - ulExistFileSize.QuadPart) * 1000.0 / (double)nCompareSpeed - (t), 0));
+				}
+
+				//if (t >= 1000)
+				{
+					//sendedSize = 0;
+					//dwStartTicks = dwEndTicks;
+				}
+
+			}
+			*/
+			sendedSize += dwBytesRead;
+			DWORD dwEndTicks = GetTickCount();
+			DWORD t = dwEndTicks - dwStartTicks;
+			if (t <= 0)
+			{
+				t = 1;
+			}
+			else if (t > 1000)
 			{
 				t = 1000;
 			}
@@ -392,7 +430,8 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			if (realSpeed > nCompareSpeed)
 			{
 				//Sleep((realSpeed * t / nCompareSpeed) - t);
-				Sleep(1000 - (1000 * nCompareSpeed / realSpeed));
+				Sleep(2000 - (1000.0 * nCompareSpeed / (double)realSpeed));
+				TRACE(_T("realSpeed = %.1f, delay = %d\n"), realSpeed, 2000 - (1000.0 * nCompareSpeed / (double)realSpeed));
 			}
 			if (t >= 1000)
 			{
@@ -477,7 +516,6 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	CString sPath = convert_special_folder_to_real_path(recv_file.cFileName);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), recv_file.cFileName, sPath);
 
-
 	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
@@ -492,6 +530,18 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 
 		//delete[] lpPathName;
 		return FALSE;
+	}
+	//0byte 파일일 경우는 굳이 더 이상의 처리가 필요없이 생성해주고 filedate을 원래 파일값으로 세팅한 후 리턴하면 된다.
+	else if (ulSize.QuadPart == 0)
+	{
+		logWrite(_T("0 byte file. recreate, modify filedate, and return."));
+		CloseHandle(hFile);
+
+		hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		SetFileTime(hFile, &recv_file.ftCreationTime, &recv_file.ftLastAccessTime, &recv_file.ftLastWriteTime);
+		CloseHandle(hFile);
+
+		return true;
 	}
 	else
 	{
