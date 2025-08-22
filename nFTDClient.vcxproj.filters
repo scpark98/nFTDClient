@@ -54,9 +54,6 @@
     <ClInclude Include="..\..\Common\Functions.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\GdiplusBitmap.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -73,6 +70,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\system\CrashHandler\CrashHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\SCGdiplusBitmap.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,9 +104,6 @@
     <ClCompile Include="..\..\Common\Functions.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\GdiplusBitmap.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -123,6 +120,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\system\CrashHandler\CrashHandler.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\SCGdiplusBitmap.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

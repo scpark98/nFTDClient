@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "nFTDClientManager.h"
-#include "../../Common/Functions.h"
+#include "Common/Functions.h"
 
 #include <thread>
 

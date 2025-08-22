@@ -8,7 +8,7 @@
 #include "nFTDClientDlg.h"
 
 #include "SocketsInitializer.h"
-#include "../../Common/Functions.h"
+#include "Common/Functions.h"
 
 HMODULE g_hRes;
 RSAKey g_rsakey;

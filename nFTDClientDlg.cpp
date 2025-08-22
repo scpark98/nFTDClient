@@ -9,7 +9,7 @@
 #include "afxdialogex.h"
 
 #include <thread>
-#include "../../Common/Functions.h"
+#include "Common/Functions.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

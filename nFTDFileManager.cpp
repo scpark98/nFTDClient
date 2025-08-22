@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
+#include "nFTDClient.h"
 #include "nFTDFileManager.h"
 
 #include "stdio.h"
@@ -10,7 +11,7 @@
 #include <direct.h>
 #include "tchar.h"
 
-#include "../../Common/Functions.h"
+#include "Common/Functions.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -75,7 +76,7 @@ BOOL CnFTDFileManager::DeleteFile(LPCTSTR lpPathName)
 
 BOOL CnFTDFileManager::change_directory(LPCTSTR lpDirName)
 {
-	CString path = convert_special_folder_to_real_path(lpDirName);
+	CString path = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, lpDirName);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), lpDirName, path);
 
 	if (_tchdir(path) == 0)

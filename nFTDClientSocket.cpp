@@ -3,7 +3,7 @@
 #include "nFTDClientDlg.h"
 #include "nFTDClientSocket.h"
 
-#include "../../Common/Functions.h"
+#include "Common/Functions.h"
 
 #include <mstcpip.h>
 #include <experimental/filesystem>
@@ -97,12 +97,14 @@ BOOL CnFTDClientSocket::Connection()
 			Sleep(1000);
 		}
 
-		logWrite(_T("Connect"));
-
 		if (!bRet)
 		{
-			logWriteE(_T("Connect Fail"));
+			logWriteE(_T("Connect Fail."));
 			return FALSE;
+		}
+		else
+		{
+			logWrite(_T("Connected."));
 		}
 
 		if (m_iServerNum != 0)
@@ -513,7 +515,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	ulSize.HighPart = recv_file.nFileSizeHigh;
 	ulSize.LowPart = recv_file.nFileSizeLow;
 
-	CString sPath = convert_special_folder_to_real_path(recv_file.cFileName);
+	CString sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, recv_file.cFileName);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), recv_file.cFileName, sPath);
 
 	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -690,7 +692,7 @@ BOOL CnFTDClientSocket::create_directory(LPCTSTR lpPathName)
 		return FALSE;
 	}
 
-	CString sPath = convert_special_folder_to_real_path(path);
+	CString sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, path);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), path, sPath);
 
 
@@ -947,7 +949,7 @@ BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 		return FALSE;
 	}
 
-	CString path = convert_special_folder_to_real_path((LPCTSTR)DirName);
+	CString path = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPCTSTR)DirName);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), (LPCTSTR)DirName, path);
 
 	//"내 PC"인 경우는 무조건 true, 그렇지 않으면 _tchdir()의 결과 리턴.
@@ -1680,7 +1682,7 @@ bool CnFTDClientSocket::filelist_all()
 	else
 	{
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
-		sPath = convert_special_folder_to_real_path((LPTSTR)path);
+		sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)path);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)path, sPath);
 
 		find_all_files(sPath, &dq, _T("*"), true, recursive);
@@ -1767,7 +1769,7 @@ bool CnFTDClientSocket::folderlist_all()
 	else
 	{
 		//sPath가 넘어왔을 때 내 PC, 바탕 화면, 문서, 로컬 디스크(C:) 와 같이 넘어오면 실제 경로로 변경해서 구해야 한다.
-		sPath = convert_special_folder_to_real_path((LPTSTR)path);
+		sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)path);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)path, sPath);
 
 		if (!PathFileExists(sPath) || !PathIsDirectory(sPath))
@@ -1876,7 +1878,7 @@ bool CnFTDClientSocket::get_subfolder_count()
 
 	std::deque<WIN32_FIND_DATA> dq;
 
-	CString sPath = convert_special_folder_to_real_path(path);
+	CString sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, path);
 	int subfolder_count = 0;
 
 	long t0 = clock();
@@ -1996,7 +1998,7 @@ bool CnFTDClientSocket::file_command()
 				return false;
 			}
 
-			CString sfullpath = convert_special_folder_to_real_path(fullpath);
+			CString sfullpath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, fullpath);
 			logWrite(_T("to real path : \"%s\" to \"%s\""), fullpath, sfullpath);
 
 			dq.push_back(sfullpath);
@@ -2018,7 +2020,7 @@ bool CnFTDClientSocket::file_command()
 			return false;
 		}
 
-		sParam0 = convert_special_folder_to_real_path((LPTSTR)param0);
+		sParam0 = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)param0);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param0, sParam0);
 
 		if (cmd == file_cmd_rename)
@@ -2038,7 +2040,7 @@ bool CnFTDClientSocket::file_command()
 			}
 
 			sParam1 = (LPTSTR)param1;
-			sParam1 = convert_special_folder_to_real_path((LPTSTR)param1);
+			sParam1 = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)param1);
 			logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param1, sParam1);
 		}
 	}
