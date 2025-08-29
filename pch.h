@@ -10,7 +10,7 @@
 // 여기에 미리 컴파일하려는 헤더 추가
 #include "framework.h"
 
-#include "../../Common/log/SCLog/SCLog.h"
+#include "Common/log/SCLog/SCLog.h"
 extern CSCLog gLog;
 //20241010 scpark 연결모드 기억을 위해 추가
 extern int g_FT_mode;

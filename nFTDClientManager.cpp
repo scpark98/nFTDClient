@@ -17,7 +17,7 @@ CnFTDClientManager::~CnFTDClientManager()
 
 BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 {
-	LPSTR lpCmdOpt;
+	//CString cmdline(lpCmdLine);
 	DWORD dwConnectionMode = 0;
 	ULONG ulAddr = 0;
 	USHORT ushPort = 0;
@@ -30,9 +30,13 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		return FALSE;
 	}
 
+	//std::deque<CString> token;
+	//get_token_string(cmdline, token, _T(" "), false);
+
 	// address
 	//lpCmdOpt = strtok(lpCmdLine, " ");
 	if (_tcscmp(__targv[1], _T("-l")) == 0)		// P2P server
+	//if (token[1] == _T("-l"))
 	{
 		g_FT_mode = FT_MODE_P2P_S;
 		dwConnectionMode = CONNECTION_LISTEN;
@@ -40,6 +44,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		logWrite(_T("dwConnectionMode = CONNECTION_LISTEN. port = %d"), ushPort);
 	}
 	else if (_tcscmp(__targv[1], _T("-c")) == 0) // P2P connect
+	//else if (token[1] == _T("-c")) // connect
 	{
 		g_FT_mode = FT_MODE_P2P_C;
 		dwConnectionMode = CONNECTION_CONNECT;
@@ -48,10 +53,13 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		logWrite(_T("dwConnectionMode = CONNECTION_CONNECT. port = %d"), ushPort);
 	}
 	else if (_tcscmp(__targv[1], _T("-p")) == 0) // AP2P (pat to pat) . NMS ¿¡ Á¢¼Ó
+	//else if (token[1] == _T("-p"))
 	{
+		TRACE(_T("2=%s, 3=%s, 4=%s\n"), __targv[2], __targv[3], __targv[4]);
 		g_FT_mode = FT_MODE_AP2P;
 		dwConnectionMode = CONNECTION_CONNECT;
 		ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
+		//ulAddr = inet_addr((char*)(LPTSTR)(token[2].GetBuffer()));
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
 		iServernum = _ttoi(__targv[4]);// atoi(strtok(NULL, " "));
 		logWrite(_T("dwConnectionMode = CONNECTION_CONNECT. port = %d"), ushPort);
@@ -86,7 +94,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 	}
 
 	m_socket.SetConnection(dwConnectionMode);
-	m_socket.SetSockAddr(ulAddr, ushPort, iServernum, bIsStandAlone);
+	m_socket.SetSockAddr(ulAddr, ushPort, iServernum, true);// bIsStandAlone);
 	m_DataSocket.SetConnection(dwConnectionMode);
 	m_DataSocket.SetSockAddr(ulAddr, ushPort, iServernum, FALSE);
 
