@@ -122,15 +122,8 @@ BOOL CnFTDClientSocket::Connection()
 
 			// N2N과의 커넥션타이밍을 맞추기 위해
 			// Neturo Host 가 처음 N2N과 접속할때 하는짓을 한다.
-			if (m_bIsN2NConnectionTiming == TRUE)
-			{
-				server_num.command = 610;
-			}
-			else
-			{
-				// nFTD가 N2N과의 커넥션타이밍을 맞출때는 700으로
-				server_num.command = AP2P_NFTD_C_SERVERNUM;
-			}
+			// nFTD가 N2N과의 커넥션타이밍을 맞출때는 700으로
+			server_num.command = AP2P_NFTD_C_SERVERNUM;
 			server_num.servernum = m_iServerNum;
 			if (!SendExact((LPSTR)&server_num, sizeof(msg_server_num)))
 			{
@@ -1204,6 +1197,7 @@ bool CnFTDClientSocket::get_drive_list()
 		}
 	}
 	
+	//모든 드라이브 목록을 보낸 후에는 마지막에 DRIVE_UNKNOWN을 보내야 끝신호로 인식한다.
 	CDiskDriveInfo drive_info;
 	drive_info.type = DRIVE_UNKNOWN;
 	if (!SendExact((LPSTR)&drive_info, sizeof(CDiskDriveInfo), BLASTSOCK_BUFFER))

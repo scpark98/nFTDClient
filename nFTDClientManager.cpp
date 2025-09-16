@@ -94,7 +94,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 	}
 
 	m_socket.SetConnection(dwConnectionMode);
-	m_socket.SetSockAddr(ulAddr, ushPort, iServernum, true);// bIsStandAlone);
+	m_socket.SetSockAddr(ulAddr, ushPort, iServernum, FALSE);// bIsStandAlone);
 	m_DataSocket.SetConnection(dwConnectionMode);
 	m_DataSocket.SetSockAddr(ulAddr, ushPort, iServernum, FALSE);
 
