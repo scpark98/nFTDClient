@@ -20,10 +20,14 @@ class CnFTDClientApp : public CWinApp
 {
 public:
 	CnFTDClientApp();
+	~CnFTDClientApp();
 
 	CShellImageList		m_shell_imagelist;
 
-// 재정의입니다.
+protected:
+	HANDLE				m_hMutex;
+
+	// 재정의입니다.
 public:
 	virtual BOOL InitInstance();
 
