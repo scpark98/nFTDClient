@@ -29,8 +29,32 @@ BOOL CnFTDClientSocket::Connection()
 	{
 		logWrite(_T("CONNECTION_CONNECT"));
 
-		in_addr Inaddr;
-		Inaddr.S_un.S_addr = m_addr;
+		in_addr addr;
+		addr.S_un.S_addr = m_addr;
+
+		/*
+		addrinfo hints = {};
+		hints.ai_family = AF_UNSPEC; // Allow IPv4 or IPv6
+		hints.ai_socktype = SOCK_STREAM; // Stream socket (TCP)
+		hints.ai_protocol = IPPROTO_TCP;
+
+		addrinfo* result = nullptr;
+		int res = getaddrinfo("dev-apsvr.lgbusinesscloud.com", nullptr, &hints, &result);
+		if (res != 0)
+		{
+			logWrite(_T("fail to getaddrinfo(). error = %S"), gai_strerror(res));
+			return FALSE;
+		}
+
+		char ip_str[INET6_ADDRSTRLEN];
+		sockaddr_in* ipv4 = reinterpret_cast<sockaddr_in*>(result->ai_addr);
+		inet_ntop(AF_INET, &(ipv4->sin_addr), ip_str, INET_ADDRSTRLEN);
+		*/
+
+		//struct hostent* remoteHost = gethostbyname((const char*)__targv[2]);
+		//struct hostent* remoteHost = gethostbyname("dev-apsvr.lgbusinesscloud.com");
+
+
 
 		if (m_iServerNum != 0)
 		{
@@ -88,7 +112,8 @@ BOOL CnFTDClientSocket::Connection()
 				continue;
 			}
 
-			bRet = Connect(inet_ntoa(Inaddr), m_port);
+			//TRACE(_T("try to connect to %S\n"), inet_ntoa(addr));
+			bRet = Connect(inet_ntoa(addr), m_port);
 			if (bRet)
 			{
 				break;

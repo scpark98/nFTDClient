@@ -48,7 +48,8 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 	{
 		g_FT_mode = FT_MODE_P2P_C;
 		dwConnectionMode = CONNECTION_CONNECT;
-		ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
+		//ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
+		ulAddr = get_S_addr_from_domain_or_ip_str(__targv[2]);
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
 		logWrite(_T("dwConnectionMode = CONNECTION_CONNECT. port = %d"), ushPort);
 	}
@@ -58,7 +59,8 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		TRACE(_T("2=%s, 3=%s, 4=%s\n"), __targv[2], __targv[3], __targv[4]);
 		g_FT_mode = FT_MODE_AP2P;
 		dwConnectionMode = CONNECTION_CONNECT;
-		ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
+		//ulAddr = inet_addr(unicodeToMultibyte(__targv[2]).c_str());
+		ulAddr = get_S_addr_from_domain_or_ip_str(__targv[2]);
 		//ulAddr = inet_addr((char*)(LPTSTR)(token[2].GetBuffer()));
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
 		iServernum = _ttoi(__targv[4]);// atoi(strtok(NULL, " "));
