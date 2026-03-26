@@ -629,7 +629,7 @@
       <AdditionalDependencies>ws2_32.lib;wininet.lib;winhttp.lib;blastsocklibD.lib;cryptlib.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>../blastsock/Debug;../blastsock/cryptopp/Win32/Output/Debug;</AdditionalLibraryDirectories>
       <StackReserveSize>41943040</StackReserveSize>
-      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

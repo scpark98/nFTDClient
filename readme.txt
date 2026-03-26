@@ -8,10 +8,11 @@
 	Release	: winSDK 8.1, vs2022 fail, vs2019 fail, vs2015 ok
 
 [Client listen parameter]
-- 1.0 AP2P listen		: -p dev-ap2p.linkmemine.com 443 1234
-- 3.0 AP2P listen		: -p 13.125.4.150 443 1234
-- client for RemoteSDK	: -p 192.168.0.48 7002 10000001
-- P2P					: -l 443
+- 1.0 AP2P listen			: -p dev-ap2p.linkmemine.com 443 1234
+- 1.0 FastAPI AP2P listen	: -p 114.108.164.45 443 299529
+- 3.0 AP2P listen			: -p 13.125.4.150 443 1234
+- client for RemoteSDK		: -p 192.168.0.48 7002 10000001
+- P2P						: -l 443
 
 
 [수정할 내용]
