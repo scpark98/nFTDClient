@@ -241,6 +241,7 @@
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="CommonLib.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
@@ -311,7 +312,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Debug|Win32'">
@@ -319,7 +320,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Debug|Win32'">
@@ -327,7 +328,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMine\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='REMOTE_SDK_Debug|Win32'">
@@ -335,7 +336,7 @@
     <OutDir>C:\Users\Public\Documents\Koino\RemoteSDK\RemoteViewer\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|Win32'">
@@ -343,7 +344,7 @@
     <OutDir>C:\Users\Public\Documents\Koino\AnySupport\Host_V10\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -391,7 +392,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">
@@ -399,7 +400,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMineSE\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">
@@ -407,7 +408,7 @@
     <OutDir>C:\Users\Public\Documents\LinkMeMine\LMMViewer\LMMLauncher\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='REMOTE_SDK_Release|Win32'">
@@ -415,7 +416,7 @@
     <OutDir>C:\Users\Public\Documents\Koino\RemoteSDK\RemoteViewer\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AnySupport_Release|Win32'">
@@ -423,7 +424,7 @@
     <OutDir>C:\Users\Public\Documents\Koino\AnySupport\Host_V10\</OutDir>
     <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <TargetName>$(ProjectName)2</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;D:\1.Projects_C++;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CommonLibRoot)\;</IncludePath>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -477,6 +478,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -512,6 +514,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -549,6 +552,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -586,6 +590,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -623,6 +628,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -832,6 +838,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -871,6 +878,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -912,6 +920,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -953,6 +962,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -994,6 +1004,7 @@
       <AdditionalOptions>-DPSAPI_VERSION=1 %(AdditionalOptions)</AdditionalOptions>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>Async</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -1213,17 +1224,17 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Common\CButton\SCSystemButtons\SCSystemButtons.h" />
-    <ClInclude Include="..\..\Common\CEdit\SCEdit\SCEdit.h" />
-    <ClInclude Include="..\..\Common\colors.h" />
-    <ClInclude Include="..\..\Common\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.h" />
-    <ClInclude Include="..\..\Common\CStatic\SCStatic\SCStatic.h" />
-    <ClInclude Include="..\..\Common\Functions.h" />
-    <ClInclude Include="..\..\Common\log\SCLog\SCLog.h" />
-    <ClInclude Include="..\..\Common\ResizeCtrl.h" />
-    <ClInclude Include="..\..\Common\SCGdiplusBitmap.h" />
-    <ClInclude Include="..\..\Common\system\CrashHandler\CrashHandler\CrashHandler.h" />
-    <ClInclude Include="..\..\Common\system\ShellImageList\ShellImageList.h" />
+    <ClInclude Include="$(CommonLibDir)\CButton\SCSystemButtons\SCSystemButtons.h" />
+    <ClInclude Include="$(CommonLibDir)\CEdit\SCEdit\SCEdit.h" />
+    <ClInclude Include="$(CommonLibDir)\colors.h" />
+    <ClInclude Include="$(CommonLibDir)\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.h" />
+    <ClInclude Include="$(CommonLibDir)\CStatic\SCStatic\SCStatic.h" />
+    <ClInclude Include="$(CommonLibDir)\Functions.h" />
+    <ClInclude Include="$(CommonLibDir)\log\SCLog\SCLog.h" />
+    <ClInclude Include="$(CommonLibDir)\ResizeCtrl.h" />
+    <ClInclude Include="$(CommonLibDir)\SCGdiplusBitmap.h" />
+    <ClInclude Include="$(CommonLibDir)\system\CrashHandler\CrashHandler\CrashHandler.h" />
+    <ClInclude Include="$(CommonLibDir)\system\ShellImageList\ShellImageList.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="nFTDClient.h" />
     <ClInclude Include="nFTDClientDlg.h" />
@@ -1235,7 +1246,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\CButton\SCSystemButtons\SCSystemButtons.cpp">
+    <ClCompile Include="$(CommonLibDir)\CButton\SCSystemButtons\SCSystemButtons.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1257,7 +1268,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\CEdit\SCEdit\SCEdit.cpp">
+    <ClCompile Include="$(CommonLibDir)\CEdit\SCEdit\SCEdit.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='REMOTE_SDK_Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1279,7 +1290,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\colors.cpp">
+    <ClCompile Include="$(CommonLibDir)\colors.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1301,7 +1312,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.cpp">
+    <ClCompile Include="$(CommonLibDir)\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1323,7 +1334,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\CStatic\SCStatic\SCStatic.cpp">
+    <ClCompile Include="$(CommonLibDir)\CStatic\SCStatic\SCStatic.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1345,7 +1356,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\Functions.cpp">
+    <ClCompile Include="$(CommonLibDir)\Functions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1367,7 +1378,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\log\SCLog\SCLog.cpp">
+    <ClCompile Include="$(CommonLibDir)\log\SCLog\SCLog.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1389,7 +1400,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\ResizeCtrl.cpp">
+    <ClCompile Include="$(CommonLibDir)\ResizeCtrl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1411,7 +1422,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\SCGdiplusBitmap.cpp">
+    <ClCompile Include="$(CommonLibDir)\SCGdiplusBitmap.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -1433,7 +1444,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='REMOTE_SDK_Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='AnySupport_Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\system\CrashHandler\CrashHandler\CrashHandler.cpp">
+    <ClCompile Include="$(CommonLibDir)\system\CrashHandler\CrashHandler\CrashHandler.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='REMOTE_SDK_Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1455,7 +1466,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Common\system\ShellImageList\ShellImageList.cpp">
+    <ClCompile Include="$(CommonLibDir)\system\ShellImageList\ShellImageList.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMMSE_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='LMM_SERVICE_Release|Win32'">NotUsing</PrecompiledHeader>
