@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 
 #include "nFTDClientManager.h"
 #include "Common/Functions.h"
@@ -53,7 +53,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		ushPort = _ttoi(__targv[3]);// (USHORT)atoi(strtok(NULL, " "));
 		logWrite(_T("dwConnectionMode = CONNECTION_CONNECT. port = %d"), ushPort);
 	}
-	else if (_tcscmp(__targv[1], _T("-p")) == 0) // AP2P (pat to pat) . NMS ¿¡ Á¢¼Ó
+	else if (_tcscmp(__targv[1], _T("-p")) == 0) // AP2P (pat to pat) . NMS ì— ì ‘ì†
 	//else if (token[1] == _T("-p"))
 	{
 		TRACE(_T("2=%s, 3=%s, 4=%s\n"), __targv[2], __targv[3], __targv[4]);
@@ -71,7 +71,7 @@ BOOL CnFTDClientManager::SetConnection(CString lpCmdLine)
 		return FALSE;
 	}
 
-	// standalone ÀÎÁö ¿©ºÎ
+	// standalone ì¸ì§€ ì—¬ë¶€
 	/*
 	lpCmdOpt = strtok(NULL, " ");
 	if (lpCmdOpt != NULL && !strcmp(lpCmdOpt, "-standalone"))
@@ -118,7 +118,7 @@ void CnFTDClientManager::run()
 
 	/*
 	Log* session_log;
-	// m_lpNMSID °¡ Á¸ÀçÇÑ´Ù¸é logging ÃÊ±âÈ­ & Á¢¼Ó½ÃÀÛ
+	// m_lpNMSID ê°€ ì¡´ì¬í•œë‹¤ë©´ logging ì´ˆê¸°í™” & ì ‘ì†ì‹œì‘
 	if(m_lpNMSID != NULL)
 	{
 		session_log = new Log(0, 1, _T("SessionHistory.log"), true);
@@ -133,7 +133,7 @@ void CnFTDClientManager::run()
 	}
 	*/
 
-	// ÇöÀç Æú´õÀÇ °æ·Î¸¦ µğÆúÆ®·Î c:\\ ·Î ÇÑ´Ù.
+	// í˜„ì¬ í´ë”ì˜ ê²½ë¡œë¥¼ ë””í´íŠ¸ë¡œ c:\\ ë¡œ í•œë‹¤.
 	SetCurrentDirectory(_T("c:\\"));
 	TCHAR temp[1024] = { 0, };
 
@@ -262,7 +262,7 @@ void CnFTDClientManager::run()
 		}
 	}
 
-	// m_lpNMSID °¡ Á¸ÀçÇÑ´Ù¸é Á¢¼ÓÁ¾·á ·Î±×
+	// m_lpNMSID ê°€ ì¡´ì¬í•œë‹¤ë©´ ì ‘ì†ì¢…ë£Œ ë¡œê·¸
 	if (m_lpNMSID != NULL)
 	{
 		logWrite(_T("(id:%s) client disconnected : %s\r\n"), m_lpNMSID, szPeerName);

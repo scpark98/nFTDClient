@@ -1,4 +1,4 @@
-// nFTDFileManager.cpp: implementation of the CnFTDFileManager class.
+ï»¿// nFTDFileManager.cpp: implementation of the CnFTDFileManager class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -128,8 +128,8 @@ BOOL CnFTDFileManager::FileList(WIN32_FIND_DATA* pFileInfo, LPCTSTR lpPathName)
 	m_hFindFile = FindFirstFile(lpBuffer, pFileInfo);
 	if(m_hFindFile != INVALID_HANDLE_VALUE)
 	{
-		// ÆÄÀÏÀÇ ¼Ó¼ºÀ» ¿©±â¼­ °áÁ¤ÇÑ´Ù
-		// system file Àº º¸³»Áö ¾Ê´Â´Ù
+		// íŒŒì¼ì˜ ì†ì„±ì„ ì—¬ê¸°ì„œ ê²°ì •í•œë‹¤
+		// system file ì€ ë³´ë‚´ì§€ ì•ŠëŠ”ë‹¤
 		if((pFileInfo->dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) == FILE_ATTRIBUTE_SYSTEM)
 			return NextFileList(pFileInfo);
 		else

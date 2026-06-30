@@ -45,37 +45,19 @@
     <ClInclude Include="nFTDFileManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\ResizeCtrl.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="$(CommonLibDir)\colors.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="$(CommonLibDir)\Functions.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="$(CommonLibDir)\log\SCLog\SCLog.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\CStatic\SCStatic\SCStatic.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\CButton\SCSystemButtons\SCSystemButtons.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="$(CommonLibDir)\system\ShellImageList\ShellImageList.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\SCGdiplusBitmap.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="$(CommonLibDir)\system\CrashHandler\CrashHandler\CrashHandler.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="$(CommonLibDir)\CEdit\SCEdit\SCEdit.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,37 +80,19 @@
     <ClCompile Include="nFTDFileManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\ResizeCtrl.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="$(CommonLibDir)\colors.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="$(CommonLibDir)\Functions.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\CProgressCtrl\MacProgressCtrl\MacProgressCtrl.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="$(CommonLibDir)\log\SCLog\SCLog.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\CStatic\SCStatic\SCStatic.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\CButton\SCSystemButtons\SCSystemButtons.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="$(CommonLibDir)\system\ShellImageList\ShellImageList.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\SCGdiplusBitmap.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="$(CommonLibDir)\system\CrashHandler\CrashHandler\CrashHandler.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="$(CommonLibDir)\CEdit\SCEdit\SCEdit.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

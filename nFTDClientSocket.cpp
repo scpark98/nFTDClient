@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "nFTDClient.h"
 #include "nFTDClientDlg.h"
 #include "nFTDClientSocket.h"
