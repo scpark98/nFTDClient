@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Common 라이브러리 경로를 본인 환경에 맞게 수정하세요 -->
+    <!-- 예: D:\src\Common 에 있으면 D:\src, K:\src\01.AnySupportService\Common 에 있으면 K:\src\01.AnySupportService -->
+    <CommonLibRoot>D:\sdk</CommonLibRoot>
+    <CommonLibDir>$(CommonLibRoot)\Common</CommonLibDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(CommonLibDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
