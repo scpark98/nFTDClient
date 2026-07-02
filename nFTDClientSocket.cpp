@@ -729,6 +729,11 @@ BOOL CnFTDClientSocket::create_directory(LPCTSTR lpPathName)
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return FALSE;
+	}
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -795,9 +800,19 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
 		return FALSE;
 	}
+	if (length1 > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length1);
+		return FALSE;
+	}
 	if (!RecvExact((LPSTR)OldPathName, length1, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-3 : %d "), GetLastError());
+		return FALSE;
+	}
+	if (length2 > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length2);
 		return FALSE;
 	}
 	if (!RecvExact((LPSTR)NewPathName, length2, BLASTSOCK_BUFFER))
@@ -847,6 +862,11 @@ BOOL CnFTDClientSocket::delete_directory(LPCTSTR lpPath)
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
 		return FALSE;
 	}
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return FALSE;
+	}
 	if (!RecvExact((LPSTR)PathName, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -889,6 +909,11 @@ BOOL CnFTDClientSocket::DeleteFile(LPCTSTR lpPathName)
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return FALSE;
+	}
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
 		return FALSE;
 	}
 	if (!RecvExact((LPSTR)PathName, length, BLASTSOCK_BUFFER))
@@ -986,6 +1011,11 @@ BOOL CnFTDClientSocket::change_directory(LPCTSTR lpDirName)
 		return FALSE;
 	}
 
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return FALSE;
+	}
 	if (!RecvExact((LPSTR)DirName, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1335,6 +1365,11 @@ BOOL CnFTDClientSocket::ExecuteFile()
 			return FALSE;
 		}
 
+		if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+		{
+			logWriteE(_T("path length overflow : %d "), length);
+			return FALSE;
+		}
 		if (!RecvExact((LPSTR)DirName, length, BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1367,6 +1402,11 @@ BOOL CnFTDClientSocket::FileInfo(WIN32_FIND_DATA* pFileInfo)
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return FALSE;
+	}
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
 		return FALSE;
 	}
 	if (!RecvExact((LPSTR)lpPathName, length, BLASTSOCK_BUFFER))
@@ -1436,6 +1476,11 @@ BOOL CnFTDClientSocket::FileList3(WIN32_FIND_DATA* pFileInfo)
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-1 : %d "), GetLastError());
+		return FALSE;
+	}
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
 		return FALSE;
 	}
 	if (!RecvExact((LPSTR)lpPathName, length, BLASTSOCK_BUFFER))
@@ -1566,6 +1611,11 @@ BOOL CnFTDClientSocket::FileList2(WIN32_FIND_DATA* pFileInfo)
 	}
 	logWrite(_T("received length = %d"), length);
 
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return FALSE;
+	}
 	if (!RecvExact((LPSTR)lpPathName, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1691,6 +1741,11 @@ bool CnFTDClientSocket::filelist_all()
 	}                                                                                                                                    
 
 	//path 수신
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return false;
+	}
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1784,6 +1839,11 @@ bool CnFTDClientSocket::folderlist_all()
 		return false;
 	}
 
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return false;
+	}
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1914,6 +1974,11 @@ bool CnFTDClientSocket::get_subfolder_count()
 	}
 
 	//path 수신
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return false;
+	}
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1979,6 +2044,11 @@ bool CnFTDClientSocket::new_folder_index()
 	}
 
 	//path 수신
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return false;
+	}
 	if (!RecvExact((LPSTR)path, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -1993,6 +2063,11 @@ bool CnFTDClientSocket::new_folder_index()
 	}
 
 	//new_folder_title 수신
+	if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+	{
+		logWriteE(_T("path length overflow : %d "), length);
+		return false;
+	}
 	if (!RecvExact((LPSTR)new_folder_title, length, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -2045,6 +2120,11 @@ bool CnFTDClientSocket::file_command()
 				break;
 
 			//fullpath 수신
+			if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+			{
+				logWriteE(_T("path length overflow : %d "), length);
+				return false;
+			}
 			if (!RecvExact((LPSTR)fullpath, length, BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -2067,6 +2147,11 @@ bool CnFTDClientSocket::file_command()
 		}
 
 		//param0 수신
+		if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+		{
+			logWriteE(_T("path length overflow : %d "), length);
+			return false;
+		}
 		if (!RecvExact((LPSTR)param0, length, BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-2 : %d "), GetLastError());
@@ -2086,6 +2171,11 @@ bool CnFTDClientSocket::file_command()
 			}
 
 			//param1 수신
+			if (length > (MAX_PATH - 1) * sizeof(TCHAR))
+			{
+				logWriteE(_T("path length overflow : %d "), length);
+				return false;
+			}
 			if (!RecvExact((LPSTR)param1, length, BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-2 : %d "), GetLastError());
