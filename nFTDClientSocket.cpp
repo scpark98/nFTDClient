@@ -291,6 +291,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-5 : %d "), GetLastError());
+		CloseHandle(hFile);
 		return FALSE;
 	}
 
@@ -299,15 +300,22 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	if (!SendExact((LPSTR)&ulFileSize, sizeof(ULARGE_INTEGER), BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-6 : %d "), GetLastError());
+		CloseHandle(hFile);
 		return FALSE;
 	}
 
-	if (ulFileSize.LowPart == 0)
+	//0바이트 파일은 수신측이 응답을 보내지 않으므로 여기서 조기 종료(프로토콜). 단 QuadPart 로 검사해야
+	//4GiB 배수(LowPart==0, HighPart>0) 파일을 빈 파일로 오판하지 않는다. 핸들도 닫는다.
+	if (ulFileSize.QuadPart == 0)
+	{
+		CloseHandle(hFile);
 		return TRUE;
+	}
 
 	if (!RecvExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 	{
 		logWriteE(_T("CODE-7 : %d "), GetLastError());
+		CloseHandle(hFile);
 		return FALSE;
 	}
 
@@ -323,6 +331,7 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		if (!RecvExact((LPSTR)&ulExistFileSize, sizeof(ULARGE_INTEGER), BLASTSOCK_BUFFER))
 		{
 			logWriteE(_T("CODE-9 : %d "), GetLastError());
+			CloseHandle(hFile);
 			return FALSE;
 		}
 
@@ -366,7 +375,13 @@ BOOL CnFTDClientSocket::SendFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 
 	do
 	{
-		ReadFile(hFile, packet, BUFFER_SIZE, &dwBytesRead, NULL);
+		if (!ReadFile(hFile, packet, BUFFER_SIZE, &dwBytesRead, NULL))
+		{
+			logWriteE(_T("SendFile ReadFile error : %d "), GetLastError());
+			CloseHandle(hFile);
+			delete[] packet;
+			return FALSE;
+		}
 
 		// 20170404 : 파일전송 도중 파일길이 늘어나면 파일 섞일 가능성이 있다.
 		//            사전에 약속한길이만큼만 보내준다.
@@ -571,6 +586,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-6 : %d "), GetLastError());
+				CloseHandle(hFile);
 				return FALSE;
 			}
 
@@ -584,12 +600,14 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			if (!SendExact((LPSTR)&exist_file, sizeof(WIN32_FIND_DATA), BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-7 : %d "), GetLastError());
+				CloseHandle(hFile);
 				return FALSE;
 			}
 
 			if (!RecvExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-8 : %d "), GetLastError());
+				CloseHandle(hFile);
 				return FALSE;
 			}
 			if (ret.type == nFTD_FileContinue)
@@ -615,6 +633,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 			{
 				logWriteE(_T("CODE-9 : %d "), GetLastError());
+				CloseHandle(hFile);
 				return FALSE;
 			}
 		}
@@ -648,7 +667,13 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			delete[] packet;
 			return FALSE;
 		}
-		WriteFile(hFile, packet, dwBytesRead, &dwBytesWrite, NULL);
+		if (!WriteFile(hFile, packet, dwBytesRead, &dwBytesWrite, NULL) || dwBytesWrite != dwBytesRead)
+		{
+			logWriteE(_T("RecvFile WriteFile error : %d "), GetLastError());
+			CloseHandle(hFile);
+			delete[] packet;
+			return FALSE;
+		}
 		ulSize.QuadPart -= dwBytesRead;
 	} while (dwBytesRead == BUFFER_SIZE);
 
@@ -1904,8 +1929,17 @@ bool CnFTDClientSocket::get_subfolder_count()
 	if (true)
 	{
 		namespace fs = std::filesystem;
-		for (auto& p : fs::directory_iterator(sPath.GetString()))
-			subfolder_count++;
+		//존재하지 않거나 접근 불가한 경로면 directory_iterator 가 예외를 던진다. 잡지 않으면 run() 밖으로
+		//전파돼 클라이언트 프로세스가 통째로 종료된다(트리 브라우징 중 흔함). 예외 시 하위폴더 0 으로 처리.
+		try
+		{
+			for (auto& p : fs::directory_iterator(sPath.GetString()))
+				subfolder_count++;
+		}
+		catch (const std::exception&)
+		{
+			subfolder_count = 0;
+		}
 	}
 	else
 	{
