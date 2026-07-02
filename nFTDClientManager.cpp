@@ -259,6 +259,10 @@ void CnFTDClientManager::run()
 			logWrite(_T("nFTD_get_subfolder_count"));
 			m_socket.get_subfolder_count();
 			break;
+		default:
+			//미지 명령 타입 — 스트림 desync 또는 신규 미구현 명령. 로깅만(루프 강제 종료는 런타임 검증 후 별도 처리).
+			logWriteE(_T("unknown command type = %d"), ret.type);
+			break;
 		}
 	}
 

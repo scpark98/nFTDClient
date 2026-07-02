@@ -551,7 +551,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 	CString sPath = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, recv_file.cFileName);
 	logWrite(_T("to real path : \"%s\" to \"%s\""), recv_file.cFileName, sPath);
 
-	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(sPath, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		logWriteE(_T("CODE-4 : %d "), GetLastError());
@@ -572,7 +572,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 		logWrite(_T("0 byte file. recreate, modify filedate, and return."));
 		CloseHandle(hFile);
 
-		hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		hFile = CreateFile(sPath, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		SetFileTime(hFile, &recv_file.ftCreationTime, &recv_file.ftLastAccessTime, &recv_file.ftLastWriteTime);
 		CloseHandle(hFile);
 
@@ -592,8 +592,9 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 
 			//기존 버전은 파일크기만 보냈으나 WIN32_FIND_DATA를 보내서 시간정보도 표시하도록 수정.
 			HANDLE hFind = FindFirstFile(sPath, &exist_file);
-			FindClose(hFind);
-			_tcscpy(exist_file.cFileName, sPath);
+			if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
+			_tcsncpy(exist_file.cFileName, sPath, _countof(exist_file.cFileName) - 1);
+			exist_file.cFileName[_countof(exist_file.cFileName) - 1] = _T('\0');
 
 			exist_filesize.LowPart = GetFileSize(hFile, &(exist_filesize.HighPart));
 			//if (!SendExact((LPSTR)&exist_filesize, sizeof(ULARGE_INTEGER), BLASTSOCK_BUFFER))
@@ -618,7 +619,7 @@ BOOL CnFTDClientSocket::RecvFile(LPCTSTR lpFromPathName, LPCTSTR lpToPathName, U
 			else if (ret.type == nFTD_FileOverWrite)
 			{
 				CloseHandle(hFile);
-				hFile = CreateFile(sPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+				hFile = CreateFile(sPath, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 			}
 			else if (ret.type == nFTD_FileIgnore)
 			{
@@ -1397,7 +1398,7 @@ BOOL CnFTDClientSocket::ExecuteFile()
 BOOL CnFTDClientSocket::FileInfo(WIN32_FIND_DATA* pFileInfo)
 {
 	USHORT length;
-	LPTSTR lpPathName = new TCHAR[MAX_PATH];
+	TCHAR lpPathName[MAX_PATH] = { 0, };	//스택 버퍼(과거 new[] 는 delete 없어 매 호출 누수했음)
 	ZeroMemory(lpPathName, MAX_PATH * sizeof(TCHAR));
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
@@ -1471,7 +1472,7 @@ BOOL CnFTDClientSocket::FileInfo(WIN32_FIND_DATA* pFileInfo)
 BOOL CnFTDClientSocket::FileList3(WIN32_FIND_DATA* pFileInfo)
 {
 	USHORT length;
-	LPTSTR lpPathName = new TCHAR[MAX_PATH];
+	TCHAR lpPathName[MAX_PATH] = { 0, };	//스택 버퍼(과거 new[] 는 delete 없어 매 호출 누수했음)
 	ZeroMemory(lpPathName, MAX_PATH * sizeof(TCHAR));
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
@@ -1602,7 +1603,7 @@ BOOL CnFTDClientSocket::FileList2(WIN32_FIND_DATA* pFileInfo)
 	*/
 
 	USHORT length;
-	LPTSTR lpPathName = new TCHAR[MAX_PATH];
+	TCHAR lpPathName[MAX_PATH] = { 0, };	//스택 버퍼(과거 new[] 는 delete 없어 매 호출 누수했음)
 	ZeroMemory(lpPathName, MAX_PATH * sizeof(TCHAR));
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
 	{
@@ -1830,7 +1831,7 @@ bool CnFTDClientSocket::folderlist_all()
 	int i;
 	msg ret;
 	USHORT length;
-	LPTSTR path = new TCHAR[MAX_PATH];
+	TCHAR path[MAX_PATH] = { 0, };	//스택 버퍼(과거 new[] 는 delete 없어 매 호출 누수했음)
 	ZeroMemory(path, MAX_PATH * sizeof(TCHAR));
 
 	if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
@@ -1963,7 +1964,7 @@ bool CnFTDClientSocket::folderlist_all()
 bool CnFTDClientSocket::get_subfolder_count()
 {
 	USHORT length;
-	LPTSTR path = new TCHAR[MAX_PATH];
+	TCHAR path[MAX_PATH] = { 0, };	//스택 버퍼(과거 new[] 는 delete 없어 매 호출 누수했음)
 	ZeroMemory(path, MAX_PATH * sizeof(TCHAR));
 
 	//path 길이 수신
