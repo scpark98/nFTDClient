@@ -2115,8 +2115,8 @@ bool CnFTDClientSocket::file_command()
 		return false;
 	}
 
-	//속성은 여러파일이 될 수 있으므로 n개의 파일명을 받는다.
-	if (cmd == file_cmd_property)
+	//속성/이동/복사는 여러 파일이 될 수 있으므로 n개의 파일명을 받는다.  //20260704 by claude. move/copy 도 소스 목록(N개)을 배치 수신.
+	if (cmd == file_cmd_property || cmd == file_cmd_move || cmd == file_cmd_copy)
 	{
 		while (true)
 		{
@@ -2149,6 +2149,16 @@ bool CnFTDClientSocket::file_command()
 
 			dq.push_back(sfullpath);
 		}
+
+		//20260704 by claude. move/copy 는 소스 목록(dq) 뒤에 '대상 폴더'(param1)를 이어서 받는다.
+		if (cmd == file_cmd_move || cmd == file_cmd_copy)
+		{
+			if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER)) { logWriteE(_T("CODE-1 : %d "), GetLastError()); return false; }
+			if (length > (MAX_PATH - 1) * sizeof(TCHAR)) { logWriteE(_T("path length overflow : %d "), length); return false; }
+			if (!RecvExact((LPSTR)param1, length, BLASTSOCK_BUFFER)) { logWriteE(_T("CODE-2 : %d "), GetLastError()); return false; }
+			sParam1 = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)param1);
+			logWrite(_T("move/copy dest: \"%s\""), sParam1);
+		}
 	}
 	else
 	{
@@ -2174,7 +2184,7 @@ bool CnFTDClientSocket::file_command()
 		sParam0 = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)param0);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param0, sParam0);
 
-		if (cmd == file_cmd_rename)
+		if (cmd == file_cmd_rename)	//20260704 by claude. rename 만 여기서 param1(새 이름) 수신. move/copy 대상은 위 배치 수신부에서 받음.
 		{
 			//param1 길이 수신
 			if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
@@ -2244,6 +2254,42 @@ bool CnFTDClientSocket::file_command()
 			SetCurrentDirectory(parent_dir);
 
 		res = delete_file(sParam0, true);
+	}
+	else if (cmd == file_cmd_move || cmd == file_cmd_copy)
+	{
+		//20260704 by claude. 리모트→리모트 이동/복사 — 서버가 보낸 소스 목록(dq) 전체를 '한 SHFileOperation' 으로 처리(로컬과 동일 배치).
+		//dq=소스 fullpath 목록, sParam1=대상 폴더. 무음 플래그를 빼서 탐색기 진행/충돌/에러 다이얼로그를 그대로 표시.
+		//CWD 락 해제: 소스의 부모 폴더가 client 현재 디렉토리면 이동이 막히므로 첫 소스의 부모로 CWD 를 옮긴다.
+		if (!dq.empty())
+		{
+			TCHAR parent_dir[MAX_PATH] = { 0, };
+			_tcsncpy_s(parent_dir, _countof(parent_dir), (LPCTSTR)dq[0], _TRUNCATE);
+			if (PathRemoveFileSpec(parent_dir) && parent_dir[0] != 0)
+				SetCurrentDirectory(parent_dir);
+		}
+
+		//pFrom: '\0' 로 구분한 소스 목록 + 끝에 '\0''\0'. basic_string 으로 임베디드 null 안전(로컬 서버 코드와 동일 방식, _tcsncpy_s 의 0xFE 채움 문제 회피).
+		std::basic_string<TCHAR> from_buf;
+		for (auto& s : dq)
+		{
+			from_buf.append((LPCTSTR)s);
+			from_buf.push_back(_T('\0'));
+		}
+		from_buf.push_back(_T('\0'));
+
+		std::basic_string<TCHAR> to_buf = (LPCTSTR)sParam1;
+		to_buf.push_back(_T('\0'));
+		to_buf.push_back(_T('\0'));
+
+		SHFILEOPSTRUCT op = { 0 };
+		op.hwnd = (AfxGetMainWnd() ? AfxGetMainWnd()->GetSafeHwnd() : NULL);
+		op.wFunc = (cmd == file_cmd_move) ? FO_MOVE : FO_COPY;
+		op.pFrom = from_buf.c_str();
+		op.pTo = to_buf.c_str();
+		op.fFlags = FOF_ALLOWUNDO;	//무음 플래그 제거 → 탐색기 진행/충돌 다이얼로그 표시(로컬과 동일). worker 스레드에서 이상하면 UI 스레드로 이관 검토.
+		int op_rc = SHFileOperation(&op);
+		logWrite(_T("[move/copy] wFunc=%d count=%d to=[%s] rc=%d(0=성공) aborted=%d"), (int)op.wFunc, (int)dq.size(), sParam1, op_rc, (int)op.fAnyOperationsAborted);
+		res = (op_rc == 0) && !op.fAnyOperationsAborted;
 	}
 	else if (cmd == file_cmd_property)
 	{
