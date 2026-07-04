@@ -822,6 +822,14 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 		return FALSE;
 	}
 
+	//20260704 by claude. 원격 탐색 시 change_directory 의 _tchdir 로 client 현재 디렉토리(CWD)가 이 폴더로 설정돼 있으면,
+	//그 폴더는 '현재 디렉토리'라 MoveFile/삭제가 SHARING_VIOLATION(32)로 실패한다(로컬은 절대경로 탐색이라 CWD 를 안 잡아 문제없음).
+	//이름변경 전 CWD 를 부모로 옮겨 잠금을 해제한다.
+	TCHAR parent_dir[MAX_PATH] = { 0, };
+	_tcsncpy_s(parent_dir, _countof(parent_dir), OldPathName, _TRUNCATE);
+	if (PathRemoveFileSpec(parent_dir) && parent_dir[0] != 0)
+		SetCurrentDirectory(parent_dir);
+
 	//if (m_FileManager.Rename(OldPathName, NewPathName))
 	if (MoveFile(OldPathName, NewPathName))
 	{
@@ -829,7 +837,7 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 	}
 	else
 	{
-		logWriteE(_T("CODE-5 : %d "), GetLastError());
+		logWriteE(_T("[rename] MoveFile FAIL err=%d "), GetLastError());
 		ret.type = nFTD_ERROR;
 	}
 	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
@@ -1429,7 +1437,11 @@ BOOL CnFTDClientSocket::FileInfo(WIN32_FIND_DATA* pFileInfo)
 		}
 		return FALSE;
 	}
-	FindFirstFile(lpPathName, &FindFileData);
+	//20260704 by claude. FindFirstFile 핸들을 안 닫아 디렉토리 열거 핸들이 릭 → 그 폴더/부모가 잠겨(SHARING_VIOLATION=32)
+	//원격 폴더 이름변경(MoveFile)이 실패하고, 서버가 이를 "이미 존재"로 오표시하던 근본 원인. 핸들 즉시 닫음.
+	HANDLE hFind = FindFirstFile(lpPathName, &FindFileData);
+	if (hFind != INVALID_HANDLE_VALUE)
+		FindClose(hFind);
 
 	msgFindFileData.type = nFTD_OK;
 	msgFindFileData.dwFileAttributes = FindFileData.dwFileAttributes;
@@ -2224,6 +2236,13 @@ bool CnFTDClientSocket::file_command()
 	}
 	else if (cmd == file_cmd_delete)
 	{
+		//20260704 by claude. rename 과 동일 — 원격 탐색 시 _tchdir 로 이 폴더가 client 현재 디렉토리면 삭제가 SHARING_VIOLATION 으로
+		//실패한다. 삭제 전 CWD 를 부모로 옮겨 잠금 해제. (파일이면 부모로 옮겨도 무해.)
+		TCHAR parent_dir[MAX_PATH] = { 0, };
+		_tcsncpy_s(parent_dir, _countof(parent_dir), (LPCTSTR)sParam0, _TRUNCATE);
+		if (PathRemoveFileSpec(parent_dir) && parent_dir[0] != 0)
+			SetCurrentDirectory(parent_dir);
+
 		res = delete_file(sParam0, true);
 	}
 	else if (cmd == file_cmd_property)
