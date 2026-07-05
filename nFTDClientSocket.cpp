@@ -2286,7 +2286,9 @@ bool CnFTDClientSocket::file_command()
 		op.wFunc = (cmd == file_cmd_move) ? FO_MOVE : FO_COPY;
 		op.pFrom = from_buf.c_str();
 		op.pTo = to_buf.c_str();
-		op.fFlags = FOF_ALLOWUNDO;	//무음 플래그 제거 → 탐색기 진행/충돌 다이얼로그 표시(로컬과 동일). worker 스레드에서 이상하면 UI 스레드로 이관 검토.
+		//무음 플래그 제거 → 탐색기 진행/충돌 다이얼로그 표시(로컬과 동일). worker 스레드에서 이상하면 UI 스레드로 이관 검토.
+		//20260705 by claude. 복사(file_cmd_copy) 시 이름충돌은 FOF_RENAMEONCOLLISION 으로 "… - 복사본"/"… (2)" 자동 리네임(탐색기 동일).
+		op.fFlags = FOF_ALLOWUNDO | ((cmd == file_cmd_copy) ? FOF_RENAMEONCOLLISION : 0);
 		int op_rc = SHFileOperation(&op);
 		logWrite(_T("[move/copy] wFunc=%d count=%d to=[%s] rc=%d(0=성공) aborted=%d"), (int)op.wFunc, (int)dq.size(), sParam1, op_rc, (int)op.fAnyOperationsAborted);
 		res = (op_rc == 0) && !op.fAnyOperationsAborted;
