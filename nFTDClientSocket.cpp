@@ -2321,14 +2321,8 @@ bool CnFTDClientSocket::file_command()
 		//무음 플래그 제거 → 탐색기 진행/충돌 다이얼로그 표시(로컬과 동일). worker 스레드에서 이상하면 UI 스레드로 이관 검토.
 		//20260705 by claude. 복사(file_cmd_copy) 시 이름충돌은 FOF_RENAMEONCOLLISION 으로 "… - 복사본"/"… (2)" 자동 리네임(탐색기 동일).
 		op.fFlags = FOF_ALLOWUNDO | ((cmd == file_cmd_copy) ? FOF_RENAMEONCOLLISION : 0);
-		//20260712 by claude. [diag temp] 드라이브 루트(D:\)로 이동이 rc=0 인데 실제로 안 되는 문제 조사.
-		CString dbg_src = dq.empty() ? CString() : dq[0];
-		TCHAR dbg_cwd[MAX_PATH] = { 0, };
-		GetCurrentDirectory(_countof(dbg_cwd), dbg_cwd);
-		bool dbg_ui = (AfxGetApp() && GetCurrentThreadId() == AfxGetApp()->m_nThreadID);
-		logWrite(_T("[move-dbg] before CWD=[%s] src=[%s] to=[%s] srcExists=%d onUIthread=%d"), dbg_cwd, (LPCTSTR)dbg_src, sParam1, (int)PathFileExists(dbg_src), (int)dbg_ui);
 		int op_rc = SHFileOperation(&op);
-		logWrite(_T("[move/copy] wFunc=%d count=%d to=[%s] rc=%d(0=성공) aborted=%d GLE=%d srcExistsAfter=%d"), (int)op.wFunc, (int)dq.size(), sParam1, op_rc, (int)op.fAnyOperationsAborted, (int)GetLastError(), (int)PathFileExists(dbg_src));
+		logWrite(_T("[move/copy] wFunc=%d count=%d to=[%s] rc=%d(0=성공) aborted=%d"), (int)op.wFunc, (int)dq.size(), sParam1, op_rc, (int)op.fAnyOperationsAborted);
 		res = (op_rc == 0) && !op.fAnyOperationsAborted;
 	}
 	else if (cmd == file_cmd_property)
