@@ -837,8 +837,17 @@ BOOL CnFTDClientSocket::Rename(LPCTSTR lpOldName, LPCTSTR lpNewName)
 	}
 	else
 	{
-		logWriteE(_T("[rename] MoveFile FAIL err=%d "), GetLastError());
-		ret.type = nFTD_ERROR;
+		//20260713 by claude. 실패 원인(GetLastError)을 카테고리 코드로 회신 → 서버가 정확한 메시지 표시(중복/권한/사용중/기타).
+		DWORD e = GetLastError();
+		logWriteE(_T("[rename] MoveFile FAIL err=%d "), e);
+		switch (e)
+		{
+			case ERROR_ALREADY_EXISTS:
+			case ERROR_FILE_EXISTS:      ret.type = rename_err_exists;  break;
+			case ERROR_ACCESS_DENIED:    ret.type = rename_err_access;  break;
+			case ERROR_SHARING_VIOLATION:ret.type = rename_err_sharing; break;
+			default:                     ret.type = rename_err_other;   break;
+		}
 	}
 	if (!SendExact((LPSTR)&ret, sz_msg, BLASTSOCK_BUFFER))
 	{
