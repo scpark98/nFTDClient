@@ -137,6 +137,11 @@ void CnFTDClientManager::run()
 	SetCurrentDirectory(_T("c:\\"));
 	TCHAR temp[1024] = { 0, };
 
+	//20260713 by claude. 접속 후 명령 루프 진입 전에, 이미 연결된 명령 소켓으로 자신의 버전을 서버에 먼저 보낸다(서버 질의 없이 클라가 push).
+	//서버는 이 첫 메시지를 받아 기억하고, 신규 원격기능(이동/복사 등)의 허용 여부를 판단한다. 구버전 클라는 이 코드가 없어 아무것도 안 보내고,
+	//서버는 소켓을 닫지 않는 ReceiveReady(짧은 대기) 로 미수신을 감지해 "0.0.0.0"(구버전)으로 처리한다.
+	m_socket.send_version();
+
 	while (1)
 	{
 		logWrite(_T("Ready"));

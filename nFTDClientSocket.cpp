@@ -2097,6 +2097,29 @@ bool CnFTDClientSocket::new_folder_index()
 	return true;
 }
 
+//20260713 by claude. 서버의 nFTD_get_version 질의에 자신(exe)의 FileVersion("2026.7.10.0" 형식)을 [USHORT 길이][문자열] 로 회신.
+//구버전 클라는 이 함수(및 run() 의 case)가 없어 아무 것도 보내지 않고, 서버는 recv timeout 으로 "0.0.0.0"(구버전)으로 처리한다.
+bool CnFTDClientSocket::send_version()
+{
+	CString version = get_file_property();	//기본값(빈 경로, "FileVersion") → 자신의 exe FileVersion.
+
+	USHORT length = _tcslen(version) * 2;
+	if (!SendExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-1 : %d"), GetLastError());
+		return false;
+	}
+
+	if (!SendExact((LPSTR)(LPCTSTR)version, length, BLASTSOCK_BUFFER))
+	{
+		logWriteE(_T("CODE-2 : %d"), GetLastError());
+		return false;
+	}
+
+	logWrite(_T("send_version: %s"), version);
+	return true;
+}
+
 bool CnFTDClientSocket::file_command()
 {
 	msg ret;

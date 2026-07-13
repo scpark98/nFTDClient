@@ -25,6 +25,9 @@ public:
 
 	bool	new_folder_index();
 
+	//20260713 by claude. 서버의 nFTD_get_version 질의에 자신(exe)의 FileVersion 문자열을 회신. 서버가 이 값으로 신규 기능 허용 여부를 판단한다.
+	bool	send_version();
+
 	BOOL Rename(LPCTSTR lpOldName, LPCTSTR lpNewName);
 	BOOL delete_directory(LPCTSTR lpPath);
 	BOOL DeleteFile(LPCTSTR lpPathName);
