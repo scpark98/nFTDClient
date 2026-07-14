@@ -10,6 +10,8 @@
 #include "SocketsInitializer.h"
 #include "Common/Functions.h"
 
+#include <stdarg.h>
+
 HMODULE g_hRes;
 RSAKey g_rsakey;
 
@@ -50,6 +52,41 @@ CnFTDClientApp::~CnFTDClientApp()
 CnFTDClientApp theApp;
 
 
+// 콘솔 상태 출력 구현.
+// AttachConsole(ATTACH_PARENT_PROCESS): cmd에서 직접 실행됐을 때만 그 cmd의 콘솔에
+// 붙는다. 다른 프로그램(서비스 등)이 호출한 경우 부모에 콘솔이 없어 실패하며,
+// AllocConsole을 쓰지 않으므로 새 창이 뜨지 않는다.
+static HANDLE g_console_out = INVALID_HANDLE_VALUE;
+
+void console_init()
+{
+	if (::AttachConsole(ATTACH_PARENT_PROCESS))
+	{
+		// CONOUT$ 핸들을 직접 열어 WriteConsoleW로 UTF-16을 그대로 쓴다.
+		// _vtprintf(=vwprintf)는 CRT 로케일로 wide→멀티바이트 변환을 하는데
+		// 기본 "C" 로케일이 한글을 못 바꿔 한글이 누락되므로 CRT를 우회한다.
+		g_console_out = ::CreateFile(_T("CONOUT$"), GENERIC_WRITE, FILE_SHARE_WRITE,
+									 NULL, OPEN_EXISTING, 0, NULL);
+	}
+}
+
+void console_status(LPCTSTR fmt, ...)
+{
+	if (g_console_out == INVALID_HANDLE_VALUE)
+		return;
+
+	TCHAR buf[1024];
+	va_list args;
+	va_start(args, fmt);
+	_vsntprintf_s(buf, _countof(buf), _TRUNCATE, fmt, args);
+	va_end(args);
+	_tcscat_s(buf, _T("\r\n"));
+
+	DWORD written = 0;
+	::WriteConsole(g_console_out, buf, (DWORD)_tcslen(buf), &written, NULL);
+}
+
+
 // CnFTDClientApp 초기화
 
 BOOL CnFTDClientApp::InitInstance()
@@ -70,6 +107,8 @@ BOOL CnFTDClientApp::InitInstance()
 
 	CWinApp::InitInstance();
 
+	console_init();
+	console_status(_T("\n[nFTDClient2] started : %s"), GetCommandLine());
 
 	AfxEnableControlContainer();
 
@@ -152,6 +191,8 @@ int CnFTDClientApp::ExitInstance()
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	//gLog.write_end_log();
+
+	console_status(_T("[nFTDClient2] exit"));
 
 	return CWinApp::ExitInstance();
 }

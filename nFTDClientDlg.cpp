@@ -193,8 +193,12 @@ void CnFTDClientDlg::thread_connect()
 	if (connect() == false)
 		return;
 
+	console_status(_T("[nFTDClient2] connected"));
+
 	ShowWindow(SW_MINIMIZE);
 	m_client_manager.run();
+
+	console_status(_T("[nFTDClient2] disconnected"));
 
 	CDialog::OnCancel();
 }

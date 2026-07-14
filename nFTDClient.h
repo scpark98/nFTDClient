@@ -38,3 +38,8 @@ public:
 };
 
 extern CnFTDClientApp theApp;
+
+// 콘솔 상태 출력: cmd에서 직접 실행된 경우에만 부모 콘솔에 붙어 출력한다.
+// 다른 프로그램이 호출한 경우 부모에 콘솔이 없어 아무 창도 뜨지 않는다.
+void console_init();
+void console_status(LPCTSTR fmt, ...);
