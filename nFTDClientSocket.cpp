@@ -2216,7 +2216,8 @@ bool CnFTDClientSocket::file_command()
 		sParam0 = theApp.m_shell_imagelist.convert_special_folder_to_real_path(0, (LPTSTR)param0);
 		logWrite(_T("to real path : \"%s\" to \"%s\""), (LPTSTR)param0, sParam0);
 
-		if (cmd == file_cmd_rename)	//20260704 by claude. rename 만 여기서 param1(새 이름) 수신. move/copy 대상은 위 배치 수신부에서 받음.
+		//20260715 by claude. set_volume_label 도 param1(새 볼륨명)을 여기서 받는다.
+		if (cmd == file_cmd_rename || cmd == file_cmd_set_volume_label)	//20260704 by claude. rename 만 여기서 param1(새 이름) 수신. move/copy 대상은 위 배치 수신부에서 받음.
 		{
 			//param1 길이 수신
 			if (!RecvExact((LPSTR)&length, sizeof(USHORT), BLASTSOCK_BUFFER))
@@ -2275,6 +2276,15 @@ bool CnFTDClientSocket::file_command()
 	else if (cmd == file_cmd_rename)
 	{
 		res = MoveFile(sParam0, sParam1);
+	}
+	else if (cmd == file_cmd_set_volume_label)
+	{
+		//20260715 by claude. 리모트 드라이브 볼륨 레이블 변경. sParam0=드라이브 root("C:\\"), sParam1=새 볼륨명.
+		//SetVolumeLabel 은 셸에 통지하지 않으므로 이 PC 의 탐색기가 열려 있으면 옛 이름이 남는다 → 로컬과 동일하게 셸에 알린다.
+		res = !!SetVolumeLabel(sParam0, sParam1);
+
+		if (res)
+			notify_shell_drive_label_changed(sParam0);
 	}
 	else if (cmd == file_cmd_delete)
 	{

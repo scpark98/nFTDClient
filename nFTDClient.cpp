@@ -86,6 +86,40 @@ void console_status(LPCTSTR fmt, ...)
 	::WriteConsole(g_console_out, buf, (DWORD)_tcslen(buf), &written, NULL);
 }
 
+void console_done()
+{
+	if (g_console_out == INVALID_HANDLE_VALUE)
+		return;
+
+	::CloseHandle(g_console_out);
+	g_console_out = INVALID_HANDLE_VALUE;
+
+	// GUI 서브시스템이라 cmd는 실행 즉시 프롬프트를 찍고 이미 입력 대기 상태다.
+	// 우리 출력은 그 프롬프트 뒤에 붙으므로 화면상 프롬프트가 사라진 것처럼 보인다.
+	// 콘솔 입력 버퍼에 Enter를 넣어 cmd가 프롬프트를 새로 그리게 한다.
+	HANDLE in = ::CreateFile(_T("CONIN$"), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ,
+							 NULL, OPEN_EXISTING, 0, NULL);
+	if (in != INVALID_HANDLE_VALUE)
+	{
+		INPUT_RECORD rec[2] = {};
+		for (int i = 0; i < 2; i++)
+		{
+			rec[i].EventType = KEY_EVENT;
+			rec[i].Event.KeyEvent.bKeyDown = (i == 0);
+			rec[i].Event.KeyEvent.wRepeatCount = 1;
+			rec[i].Event.KeyEvent.wVirtualKeyCode = VK_RETURN;
+			rec[i].Event.KeyEvent.wVirtualScanCode = (WORD)::MapVirtualKey(VK_RETURN, MAPVK_VK_TO_VSC);
+			rec[i].Event.KeyEvent.uChar.UnicodeChar = _T('\r');
+		}
+
+		DWORD count = 0;
+		::WriteConsoleInput(in, rec, 2, &count);
+		::CloseHandle(in);
+	}
+
+	::FreeConsole();
+}
+
 
 // CnFTDClientApp 초기화
 
@@ -193,6 +227,7 @@ int CnFTDClientApp::ExitInstance()
 	//gLog.write_end_log();
 
 	console_status(_T("[nFTDClient2] exit"));
+	console_done();
 
 	return CWinApp::ExitInstance();
 }

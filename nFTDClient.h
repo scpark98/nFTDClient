@@ -43,3 +43,4 @@ extern CnFTDClientApp theApp;
 // 다른 프로그램이 호출한 경우 부모에 콘솔이 없어 아무 창도 뜨지 않는다.
 void console_init();
 void console_status(LPCTSTR fmt, ...);
+void console_done();
