@@ -3,7 +3,7 @@
 #include "blastsock.h"
 
 #include "nFTDFileManager.h"
-#include "../nFTDServer/nFTDProtocol.h"
+#include "../nFTDServer2/nFTDProtocol.h"
 
 #define CONNECTION_CONNECT	0	
 #define CONNECTION_LISTEN	1
